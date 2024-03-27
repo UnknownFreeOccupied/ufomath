@@ -1,1 +1,2 @@
-# ufomath
+# UFOMath
+The UFO math library
