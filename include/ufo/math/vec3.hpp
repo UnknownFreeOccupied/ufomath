@@ -120,102 +120,68 @@ struct Vec3 {
 
 	constexpr T const &yaw() const noexcept { return z; }
 
-	constexpr Vec3 operator-() const noexcept { return Vec3(-x, -y, -z); }
-
-	constexpr Vec3 operator-(Vec3 const &other) const noexcept
-	{
-		return Vec3(x - other.x, y - other.y, z - other.z);
-	}
-
-	constexpr Vec3 operator-(T value) const noexcept
-	{
-		return Vec3(x - value, y - value, z - value);
-	}
-
-	constexpr Vec3 operator+(Vec3 const &other) const noexcept
-	{
-		return Vec3(x + other.x, y + other.y, z + other.z);
-	}
-
-	constexpr Vec3 operator+(T value) const noexcept
-	{
-		return Vec3(x + value, y + value, z + value);
-	}
-
-	constexpr Vec3 operator*(Vec3 const &other) const noexcept
-	{
-		return Vec3(x * other.x, y * other.y, z * other.z);
-	}
-
-	constexpr Vec3 operator*(T value) const noexcept
-	{
-		return Vec3(x * value, y * value, z * value);
-	}
-
-	constexpr Vec3 operator/(Vec3 const &other) const noexcept
-	{
-		return Vec3(x / other.x, y / other.y, z / other.z);
-	}
-
-	constexpr Vec3 operator/(T value) const noexcept
-	{
-		return Vec3(x / value, y / value, z / value);
-	}
-
-	constexpr void operator-=(Vec3 const &other) noexcept
+	constexpr Vec3 &operator-=(Vec3 const &other) noexcept
 	{
 		x -= other.x;
 		y -= other.y;
 		z -= other.z;
+		return *this;
 	}
 
-	constexpr void operator+=(Vec3 const &other) noexcept
+	constexpr Vec3 &operator+=(Vec3 const &other) noexcept
 	{
 		x += other.x;
 		y += other.y;
 		z += other.z;
+		return *this;
 	}
 
-	constexpr void operator*=(Vec3 const &other) noexcept
+	constexpr Vec3 &operator*=(Vec3 const &other) noexcept
 	{
 		x *= other.x;
 		y *= other.y;
 		z *= other.z;
+		return *this;
 	}
 
-	constexpr void operator/=(Vec3 const &other) noexcept
+	constexpr Vec3 &operator/=(Vec3 const &other) noexcept
 	{
 		x /= other.x;
 		y /= other.y;
 		z /= other.z;
+		return *this;
 	}
 
-	constexpr void operator-=(T value) noexcept
+	constexpr Vec3 &operator-=(T value) noexcept
 	{
 		x -= value;
 		y -= value;
 		z -= value;
+		return *this;
 	}
 
-	constexpr void operator+=(T value) noexcept
+	constexpr Vec3 &operator+=(T value) noexcept
 	{
 		x += value;
 		y += value;
 		z += value;
+		return *this;
 	}
 
-	constexpr void operator*=(T value) noexcept
+	constexpr Vec3 &operator*=(T value) noexcept
 	{
 		x *= value;
 		y *= value;
 		z *= value;
+		return *this;
 	}
 
-	constexpr void operator/=(T value) noexcept
+	constexpr Vec3 &operator/=(T value) noexcept
 	{
 		x /= value;
 		y /= value;
 		z /= value;
+		return *this;
 	}
 
 	constexpr bool operator==(Vec3 const &other) const noexcept
@@ -242,7 +208,10 @@ struct Vec3 {
 
 	constexpr auto angleTo(Vec3 const &other) const noexcept
 	{
-		return std::acos(dot(other) / (norm() * other.norm()));
+		// TODO do we want the clamp
+		// need the clamp to prevent nan from acos
+		// argument can be slightly >1 from calculations
+		return std::acos(std::clamp(dot(other) / (norm() * other.norm()), -1.0f, 1.0f));
 	}
 
 	constexpr T squaredDistance(Vec3 const &other) const noexcept
@@ -379,6 +348,88 @@ struct Vec3 {
 		return Vec3(std::abs(value.x), std::abs(value.y), std::abs(value.z));
 	}
 };
+
+// Addition
+template <class T>
+constexpr Vec3<T> operator+(Vec3<T> const &lhs, Vec3<T> const &rhs) noexcept
+{
+	return Vec3<T>(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
+}
+
+template <class T>
+constexpr Vec3<T> operator+(Vec3<T> const &lhs, T rhs) noexcept
+{
+	return Vec3(lhs.x + rhs, lhs.y + rhs, lhs.z + rhs);
+}
+
+template <class T>
+constexpr Vec3<T> operator+(T const &lhs, Vec3<T> const &rhs)
+{
+	return {lhs + rhs.x, lhs + rhs.y, lhs + rhs.z};
+}
+
+// Subtraction
+template <class T>
+constexpr Vec3<T> operator-(Vec3<T> const &lhs, Vec3<T> const &rhs)
+{
+	return {lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z};
+}
+
+template <class T>
+constexpr Vec3<T> operator-(Vec3<T> const &lhs, T const &rhs)
+{
+	return {lhs.x - rhs, lhs.y - rhs, lhs.z - rhs};
+}
+
+template <class T>
+constexpr Vec3<T> operator-(T const &lhs, Vec3<T> const &rhs)
+{
+	return {lhs - rhs.x, lhs - rhs.y, lhs - rhs.z};
+}
+
+template <class T>
+constexpr Vec3<T> operator-(Vec3<T> const &val)
+{
+	return {-val.x, -val.y, -val.z};
+}
+
+// Multiplication
+template <class T>
+constexpr Vec3<T> operator*(Vec3<T> const &lhs, Vec3<T> const &rhs)
+{
+	return {lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z};
+}
+
+template <class T>
+constexpr Vec3<T> operator*(Vec3<T> const &lhs, T const &rhs)
+{
+	return {lhs.x * rhs, lhs.y * rhs, lhs.z * rhs};
+}
+
+template <class T>
+constexpr Vec3<T> operator*(T const &lhs, Vec3<T> const &rhs)
+{
+	return {lhs * rhs.x, lhs * rhs.y, lhs * rhs.z};
+}
+
+// Division
+template <class T>
+constexpr Vec3<T> operator/(Vec3<T> const &lhs, Vec3<T> const &rhs)
+{
+	return {lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z};
+}
+
+template <class T>
+constexpr Vec3<T> operator/(Vec3<T> const &lhs, T const &rhs)
+{
+	return {lhs.x / rhs, lhs.y / rhs, lhs.z / rhs};
+}
+
+template <class T>
+constexpr Vec3<T> operator/(T const &lhs, Vec3<T> const &rhs)
+{
+	return {lhs / rhs.x, lhs / rhs.y, lhs / rhs.z};
+}
 
 template <typename T>
 std::ostream &operator<<(std::ostream &out, ufo::Vec3<T> vec)

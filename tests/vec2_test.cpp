@@ -913,7 +913,7 @@ TEST_CASE("[Vec2f] [2D Cross Product]")
 		REQUIRE(result1 == Catch::Approx(-2.0f));
 
 		float result2 = u2.cross(v2);
-		REQUIRE(result2 == Catch::Approx(14.0f));
+		REQUIRE(result2 == Catch::Approx(-2.0f));
 	}
 
 	SECTION("Collinear Vectors")
