@@ -63,6 +63,8 @@ struct Vec3 {
 
 	constexpr Vec3() noexcept = default;
 
+	constexpr Vec3(T v) noexcept : x(v), y(v), z(v){};
+
 	constexpr Vec3(T x, T y, T z) noexcept : x(x), y(y), z(z) {}
 
 	constexpr Vec3(Vec3 const &) noexcept = default;  // Redundant
