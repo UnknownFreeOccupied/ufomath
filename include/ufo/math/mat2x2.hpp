@@ -70,7 +70,8 @@ struct Mat<2, 2, T> {
 	|                                                                                     |
 	**************************************************************************************/
 
-	constexpr Mat() noexcept           = default;
+	constexpr Mat() noexcept : value_{column_type(1, 0), column_type(0, 1)} {}
+
 	constexpr Mat(Mat const&) noexcept = default;
 
 	constexpr explicit Mat(T value) noexcept
@@ -248,7 +249,7 @@ struct Mat<2, 2, T> {
 	void swap(Mat& other) noexcept { value_.swap(other.value_); }
 
  private:
-	std::array<column_type, 2> value_;
+	std::array<column_type, 2> value_
 };
 
 /**************************************************************************************

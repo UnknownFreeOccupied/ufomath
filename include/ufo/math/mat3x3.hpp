@@ -70,7 +70,11 @@ struct Mat<3, 3, T> {
 	|                                                                                     |
 	**************************************************************************************/
 
-	constexpr Mat() noexcept           = default;
+	constexpr Mat() noexcept
+	    : value_{column_type(1, 0, 0), column_type(0, 1, 0), column_type(0, 0, 1)}
+	{
+	}
+
 	constexpr Mat(Mat const&) noexcept = default;
 
 	constexpr explicit Mat(T value) noexcept
