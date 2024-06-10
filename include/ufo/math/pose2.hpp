@@ -42,26 +42,30 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UFO_MATH_POSE3_HPP
-#define UFO_MATH_POSE3_HPP
+#ifndef UFO_MATH_POSE2_HPP
+#define UFO_MATH_POSE2_HPP
 
 // UFO
 #include <ufo/math/detail/pose.hpp>
 #include <ufo/math/detail/pose_fun.hpp>
+#include <ufo/math/mat2x2.hpp>
 #include <ufo/math/mat3x3.hpp>
-#include <ufo/math/mat4x4.hpp>
-#include <ufo/math/quat.hpp>
-#include <ufo/math/vec3.hpp>
+#include <ufo/math/vec2.hpp>
+
+// STL
+#include <cmath>
+#include <cstddef>
 
 namespace ufo
 {
 template <class T>
-struct Pose<3, T> {
+struct Pose<2, T> {
 	using value_type = T;
 	using size_type  = std::size_t;
 
-	Vec3<T> position;
-	Quat<T> orientation;
+	Vec2<T> position;
+	// Orientation in radius
+	T theta{};
 
 	/**************************************************************************************
 	|                                                                                     |
@@ -72,43 +76,36 @@ struct Pose<3, T> {
 	constexpr Pose() noexcept             = default;
 	constexpr Pose(Pose const &) noexcept = default;
 
-	constexpr Pose(Vec3<T> position, Quat<T> orientation) noexcept
-	    : position(position), orientation(orientation)
-	{
-	}
+	constexpr Pose(Vec2<T> position, T theta) noexcept : position(position), theta(theta) {}
 
-	template <class Position, class Orientation>
-	constexpr Pose(Vec3<Position> position, Quat<Orientation> orientation) noexcept
-	    : position(position), orientation(orientation)
+	template <class Position, class Theta>
+	constexpr Pose(Vec2<Position> position, Theta theta) noexcept
+	    : position(position), theta(static_cast<T>(theta))
 	{
 	}
 
 	template <class Position, class U>
-	constexpr Pose(Vec3<Position> position, Mat3x3<U> const &orientation) noexcept
-	    : position(position), orientation(orientation)
+	constexpr Pose(Vec2<Position> position, Mat2x2<U> const &theta) noexcept
+	    : position(position), theta(...)
 	{
 	}
 
 	template <class U>
-	constexpr explicit Pose(Mat4x4<U> const &m) noexcept
-	    : position(m[3]), orientation(Mat3x3<U>(m))
+	constexpr explicit Pose(Mat3x3<U> const &m) : position(m[2]), theta(...)
 	{
 	}
 
-	constexpr Pose(T x, T y, T z, T qx, T qy, T qz, T qw) noexcept
-	    : position(x, y, z), orientation(qx, qy, qz, qw)
-	{
-	}
+	constexpr Pose(T x, T y, T theta) noexcept : position(x, y), theta(theta) {}
 
-	template <class X, class Y, class Z, class QX, class QY, class QZ, class QW>
-	constexpr Pose(X x, Y y, Z z, QX qx, QY qy, QZ qz, QW qw) noexcept
-	    : position(x, y, z), orientation(qx, qy, qz, qw)
+	template <class X, class Y, class Theta>
+	constexpr Pose(X x, Y y, Theta theta) noexcept
+	    : position(x, y), theta(static_cast<T>(theta))
 	{
 	}
 
 	template <class U>
-	constexpr Pose(Pose<3, U> const &other) noexcept
-	    : position(other.position), orientation(other.orientation)
+	constexpr Pose(Pose<2, U> const &other) noexcept
+	    : position(other.position), theta(static_cast<T>(other.theta))
 	{
 	}
 
@@ -121,10 +118,10 @@ struct Pose<3, T> {
 	constexpr Pose &operator=(Pose const &) noexcept = default;
 
 	template <class U>
-	constexpr Pose &operator=(Pose<3, U> const &rhs) noexcept
+	constexpr Pose &operator=(Pose<2, U> rhs) noexcept
 	{
-		position    = rhs.position;
-		orientation = rhs.orientation;
+		position = rhs.position;
+		theta    = static_cast<T>(rhs.theta);
 		return *this;
 	}
 
@@ -134,63 +131,29 @@ struct Pose<3, T> {
 	|                                                                                     |
 	**************************************************************************************/
 
-	constexpr explicit operator Mat3x3<T>() const
+	constexpr explicit operator Mat2x2<T>() const
 	{
-		T d = normSquared(orientation);
-
-		assert(d != T(0));
-
-		T s = T(2) / d;
-
-		T xs = orientation.x * s;
-		T ys = orientation.y() * s;
-		T zs = orientation.z() * s;
-		T wx = orientation.w * xs;
-		T wy = orientation.w() * ys;
-		T wz = orientation.w() * zs;
-		T xx = orientation.x * xs;
-		T xy = orientation.x() * ys;
-		T xz = orientation.x() * zs;
-		T yy = orientation.y * ys;
-		T yz = orientation.y() * zs;
-		T zz = orientation.z() * zs;
+		auto sin_theta = std::sin(theta);
+		auto cos_theta = std::cos(theta);
 
 		// clang-format off
-		return {T(1) - (yy + zz), xy - wz,          xz + wy,
-		        xy + wz,          T(1) - (xx + zz), yz - wx,
-						xz - wy,          yz + wx,          T(1) - (xx + yy)};
+		return {cos_theta, -sin_theta,
+		        sin_theta,  cos_theta};
 		// clang-format on
 	}
 
-	constexpr explicit operator Mat4x4<T>() const
+	constexpr explicit operator Mat3x3<T>() const
 	{
-		T d = normSquared(orientation);
-
-		assert(d != T(0));
-
-		T s = T(2) / d;
-
-		T xs = orientation.x * s;
-		T ys = orientation.y() * s;
-		T zs = orientation.z() * s;
-		T wx = orientation.w * xs;
-		T wy = orientation.w() * ys;
-		T wz = orientation.w() * zs;
-		T xx = orientation.x * xs;
-		T xy = orientation.x() * ys;
-		T xz = orientation.x() * zs;
-		T yy = orientation.y * ys;
-		T yz = orientation.y() * zs;
-		T zz = orientation.z() * zs;
+		auto sin_theta = std::sin(theta);
+		auto cos_theta = std::cos(theta);
 
 		// clang-format off
-		return {T(1) - (yy + zz), xy - wz,          xz + wy,          position.x,
-		        xy + wz,          T(1) - (xx + zz), yz - wx,          position.y,
-						xz - wy,          yz + wx,          T(1) - (xx + yy), position.z,
-						T(0),             T(0),             T(0),             T(1)};
+		return {cos_theta, -sin_theta, position.x,
+		        sin_theta,  cos_theta, position.y,
+						T(0),       T(0),      T(1)};
 		// clang-format on
 	}
 };
 }  // namespace ufo
 
-#endif  // UFO_MATH_POSE3_HPP
+#endif  // UFO_MATH_POSE2_HPP

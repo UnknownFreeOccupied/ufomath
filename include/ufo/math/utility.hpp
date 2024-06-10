@@ -39,8 +39,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UFO_MATH_UTIL_HPP
-#define UFO_MATH_UTIL_HPP
+#ifndef UFO_MATH_UTILITY_HPP
+#define UFO_MATH_UTILITY_HPP
 
 // STL
 #include <type_traits>
@@ -58,31 +58,39 @@ template <class T>
 }
 
 template <class T>
-[[nodiscard]] constexpr T degToRad(T degrees) noexcept
+[[nodiscard]] constexpr T radians(T degrees) noexcept
 {
 	// returns degrees * (pi / 180)
 	if constexpr (std::is_same_v<T, long double>) {
-		return degrees * 0.0174532925199432957692369076848861271344287188854172545609719144L;
+		return degrees *
+		       static_cast<T>(
+		           0.0174532925199432957692369076848861271344287188854172545609719144L);
 	} else {
-		return degrees * 0.0174532925199432957692369076848861271344287188854172545609719144;
+		return degrees *
+		       static_cast<T>(
+		           0.0174532925199432957692369076848861271344287188854172545609719144);
 	}
 }
 
 template <class T>
-[[nodiscard]] constexpr T radToDeg(T radians) noexcept
+[[nodiscard]] constexpr T degrees(T radians) noexcept
 {
 	// returns radians * (180 / pi)
 	if constexpr (std::is_same_v<T, long double>) {
-		return radians * 57.295779513082320876798154814105170332405472466564321549160243861L;
+		return radians *
+		       static_cast<T>(
+		           57.295779513082320876798154814105170332405472466564321549160243861L);
 	} else {
-		return radians * 57.295779513082320876798154814105170332405472466564321549160243861;
+		return radians *
+		       static_cast<T>(
+		           57.295779513082320876798154814105170332405472466564321549160243861);
 	}
 }
 
 template <class T>
 [[nodiscard]] constexpr T ipow(T base, int exp)
 {
-	T result = sgn(base);
+	T result = static_cast<T>(sgn(base));
 	for (int e = 0 <= exp ? exp : -exp; 0 != e; --e) {
 		result *= base;
 	}
@@ -90,4 +98,4 @@ template <class T>
 }
 }  // namespace ufo
 
-#endif  // UFO_MATH_UTIL_HPP
+#endif  // UFO_MATH_UTILITY_HPP

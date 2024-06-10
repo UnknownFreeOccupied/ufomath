@@ -7,9 +7,13 @@ include("${PROJECT_SOURCE_DIR}/3rdparty/catch2/catch2.cmake")
 # # set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE ON)
 
 add_executable(ufomath_tests
+	mat2x2_test.cpp
+	mat3x3_test.cpp
+	mat4x4_test.cpp
+	pose2_test.cpp
 	pose3_test.cpp
-	pose6_test.cpp
 	quat_test.cpp
+	vec1_test.cpp
 	vec2_test.cpp
 	vec3_test.cpp
 	vec4_test.cpp
