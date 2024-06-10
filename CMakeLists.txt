@@ -6,6 +6,8 @@ project(ufomath
 	LANGUAGES CXX
 )
 
+add_subdirectory(1stparty)
+
 add_library(ufomath INTERFACE)
 add_library(UFO::Math ALIAS ufomath)
 
@@ -15,6 +17,8 @@ set_target_properties(ufomath PROPERTIES
 	INTERFACE_CXX_STANDARD 17
 	INTERFACE_CXX_EXTENSIONS OFF
 )
+
+target_link_libraries(ufomath INTERFACE UFO::Utility)
 
 target_include_directories(ufomath INTERFACE
 	$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>

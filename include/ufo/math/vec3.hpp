@@ -45,401 +45,808 @@
 #ifndef UFO_MATH_VEC3_HPP
 #define UFO_MATH_VEC3_HPP
 
+// UFO
+#include <ufo/math/detail/vec.hpp>
+#include <ufo/math/detail/vec_fun.hpp>
+
 // STL
-#include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <cstddef>
-#include <ostream>
+#include <utility>
 
 namespace ufo
 {
 template <typename T>
-struct Vec3 {
-	using scalar_t = T;
+struct Vec<3, T> {
+	using value_type = T;
+	using size_type  = std::size_t;
 
-	T x = 0;
-	T y = 0;
-	T z = 0;
+	T x{};
+	T y{};
+	T z{};
 
-	constexpr Vec3() noexcept = default;
+	/**************************************************************************************
+	|                                                                                     |
+	|                                    Constructors                                     |
+	|                                                                                     |
+	**************************************************************************************/
 
-	constexpr Vec3(T x, T y, T z) noexcept : x(x), y(y), z(z) {}
+	constexpr Vec() noexcept            = default;
+	constexpr Vec(Vec const &) noexcept = default;
 
-	constexpr Vec3(Vec3 const &) noexcept = default;  // Redundant
+	constexpr explicit Vec(T value) noexcept : x(value), y(value), z(value) {}
 
-	template <typename T2, class = std::enable_if_t<not std::is_same_v<T, T2>>>
-	constexpr Vec3(Vec3<T2> const other) noexcept
-	    : x(static_cast<T>(other.x)), y(static_cast<T>(other.y)), z(static_cast<T>(other.z))
+	constexpr Vec(T x, T y, T z) noexcept : x(x), y(y), z(z) {}
+
+	template <class U>
+	constexpr explicit Vec(Vec<1, U> v) noexcept
+	    : x(static_cast<T>(v.x)), y(static_cast<T>(v.x)), z(static_cast<T>(v.x))
 	{
 	}
 
-	constexpr Vec3 &operator=(Vec3 const &) noexcept = default;  // Redundant
-
-	template <typename T2, class = std::enable_if_t<not std::is_same_v<T, T2>>>
-	constexpr Vec3 &operator=(Vec3<T2> const rhs) noexcept
+	template <class X, class Y, class Z>
+	constexpr Vec(X x, Y y, Z z) noexcept
+	    : x(static_cast<T>(x)), y(static_cast<T>(y)), z(static_cast<T>(z))
 	{
-		x = rhs.x;
-		y = rhs.y;
-		z = rhs.z;
+	}
+
+	template <class X, class Y, class Z>
+	constexpr Vec(Vec<1, X> x, Y y, Z z) noexcept
+	    : x(static_cast<T>(x.x)), y(static_cast<T>(y)), z(static_cast<T>(z))
+	{
+	}
+
+	template <class X, class Y, class Z>
+	constexpr Vec(X x, Vec<1, Y> y, Z z) noexcept
+	    : x(static_cast<T>(x)), y(static_cast<T>(y.x)), z(static_cast<T>(z))
+	{
+	}
+
+	template <class X, class Y, class Z>
+	constexpr Vec(X x, Y y, Vec<1, Z> z) noexcept
+	    : x(static_cast<T>(x)), y(static_cast<T>(y)), z(static_cast<T>(z.x))
+	{
+	}
+
+	template <class X, class Y, class Z>
+	constexpr Vec(Vec<1, X> x, Vec<1, Y> y, Z z) noexcept
+	    : x(static_cast<T>(x.x)), y(static_cast<T>(y.x)), z(static_cast<T>(z))
+	{
+	}
+
+	template <class X, class Y, class Z>
+	constexpr Vec(Vec<1, X> x, Y y, Vec<1, Z> z) noexcept
+	    : x(static_cast<T>(x.x)), y(static_cast<T>(y)), z(static_cast<T>(z.x))
+	{
+	}
+
+	template <class X, class Y, class Z>
+	constexpr Vec(X x, Vec<1, Y> y, Vec<1, Z> z) noexcept
+	    : x(static_cast<T>(x)), y(static_cast<T>(y.x)), z(static_cast<T>(z.x))
+	{
+	}
+
+	template <class X, class Y, class Z>
+	constexpr Vec(Vec<1, X> x, Vec<1, Y> y, Vec<1, Z> z) noexcept
+	    : x(static_cast<T>(x.x)), y(static_cast<T>(y.x)), z(static_cast<T>(z.x))
+	{
+	}
+
+	template <class XY, class Z>
+	constexpr Vec(Vec<2, XY> xy, Z z) noexcept
+	    : x(static_cast<T>(xy.x)), y(static_cast<T>(xy.y)), z(static_cast<T>(z))
+	{
+	}
+
+	template <class XY, class Z>
+	constexpr Vec(Vec<2, XY> xy, Vec<1, Z> z) noexcept
+	    : x(static_cast<T>(xy.x)), y(static_cast<T>(xy.y)), z(static_cast<T>(z.x))
+	{
+	}
+
+	template <class X, class YZ>
+	constexpr Vec(X x, Vec<2, YZ> yz) noexcept
+	    : x(static_cast<T>(x)), y(static_cast<T>(yz.x)), z(static_cast<T>(yz.y))
+	{
+	}
+
+	template <class X, class YZ>
+	constexpr Vec(Vec<1, X> x, Vec<2, YZ> yz) noexcept
+	    : x(static_cast<T>(x.x)), y(static_cast<T>(yz.x)), z(static_cast<T>(yz.y))
+	{
+	}
+
+	template <class U>
+	constexpr explicit Vec(Vec<3, U> v) noexcept
+	    : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)), z(static_cast<T>(v.z))
+	{
+	}
+
+	template <class U>
+	constexpr explicit Vec(Vec<4, U> v) noexcept
+	    : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)), z(static_cast<T>(v.z))
+	{
+	}
+
+	/**************************************************************************************
+	|                                                                                     |
+	|                                 Assignment operator                                 |
+	|                                                                                     |
+	**************************************************************************************/
+
+	constexpr Vec &operator=(Vec const &) noexcept = default;
+
+	template <class U>
+	constexpr Vec &operator=(Vec<3, U> rhs) noexcept
+	{
+		x = static_cast<T>(rhs.x);
+		y = static_cast<T>(rhs.y);
+		z = static_cast<T>(rhs.z);
 		return *this;
 	}
 
-	constexpr Vec3 cross(Vec3 const &other) const noexcept { return cross(*this, other); }
+	/**************************************************************************************
+	|                                                                                     |
+	|                                   Element access                                    |
+	|                                                                                     |
+	**************************************************************************************/
 
-	static constexpr Vec3 cross(Vec3 const &first, Vec3 const &second) noexcept
+	[[nodiscard]] constexpr T &operator[](size_type pos) noexcept
 	{
-		return Vec3((first.y * second.z) - (first.z * second.y),
-		            (first.z * second.x) - (first.x * second.z),
-		            (first.x * second.y) - (first.y * second.x));
+		assert(size() > pos);
+		return (&x)[pos];
 	}
 
-	constexpr T dot(Vec3 const &other) const noexcept { return dot(*this, other); }
-
-	static constexpr T dot(Vec3 const &first, Vec3 const &second) noexcept
+	[[nodiscard]] constexpr T const &operator[](size_type pos) const noexcept
 	{
-		return (first.x * second.x) + (first.y * second.y) + (first.z * second.z);
+		assert(size() > pos);
+		return (&x)[pos];
 	}
 
-	constexpr T &operator()(size_t idx) noexcept { return *(&x + idx); }
+	/**************************************************************************************
+	|                                                                                     |
+	|                              Unary arithmetic operator                              |
+	|                                                                                     |
+	**************************************************************************************/
 
-	constexpr T const &operator()(size_t idx) const noexcept { return *(&x + idx); }
+	constexpr Vec operator+() const noexcept { return *this; }
 
-	constexpr T &operator[](size_t idx) noexcept { return *(&x + idx); }
+	constexpr Vec operator-() const noexcept { return {-x, -y, -z}; }
 
-	constexpr T const &operator[](size_t idx) const noexcept { return *(&x + idx); }
+	constexpr Vec operator~() const noexcept { return {~x, ~y, ~z}; }
 
-	constexpr T &roll() noexcept { return x; }
+	/**************************************************************************************
+	|                                                                                     |
+	|                            Compound assignment operator                             |
+	|                                                                                     |
+	**************************************************************************************/
 
-	constexpr T const &roll() const noexcept { return x; }
-
-	constexpr T &pitch() noexcept { return y; }
-
-	constexpr T const &pitch() const noexcept { return y; }
-
-	constexpr T &yaw() noexcept { return z; }
-
-	constexpr T const &yaw() const noexcept { return z; }
-
-	constexpr Vec3 &operator-=(Vec3 const &other) noexcept
+	template <class U>
+	constexpr Vec &operator+=(U value) noexcept
 	{
-		x -= other.x;
-		y -= other.y;
-		z -= other.z;
+		x += static_cast<T>(value);
+		y += static_cast<T>(value);
+		z += static_cast<T>(value);
 		return *this;
 	}
 
-	constexpr Vec3 &operator+=(Vec3 const &other) noexcept
+	template <class U>
+	constexpr Vec &operator+=(Vec<1, U> v) noexcept
 	{
-		x += other.x;
-		y += other.y;
-		z += other.z;
+		x += static_cast<T>(v.x);
+		y += static_cast<T>(v.x);
+		z += static_cast<T>(v.x);
 		return *this;
 	}
 
-	constexpr Vec3 &operator*=(Vec3 const &other) noexcept
+	template <class U>
+	constexpr Vec &operator+=(Vec<3, U> v) noexcept
 	{
-		x *= other.x;
-		y *= other.y;
-		z *= other.z;
+		x += static_cast<T>(v.x);
+		y += static_cast<T>(v.y);
+		z += static_cast<T>(v.z);
 		return *this;
 	}
 
-	constexpr Vec3 &operator/=(Vec3 const &other) noexcept
+	template <class U>
+	constexpr Vec &operator-=(U value) noexcept
 	{
-		x /= other.x;
-		y /= other.y;
-		z /= other.z;
+		x -= static_cast<T>(value);
+		y -= static_cast<T>(value);
+		z -= static_cast<T>(value);
 		return *this;
 	}
 
-	constexpr Vec3 &operator-=(T value) noexcept
+	template <class U>
+	constexpr Vec &operator-=(Vec<1, U> v) noexcept
 	{
-		x -= value;
-		y -= value;
-		z -= value;
+		x -= static_cast<T>(v.x);
+		y -= static_cast<T>(v.x);
+		z -= static_cast<T>(v.x);
 		return *this;
 	}
 
-	constexpr Vec3 &operator+=(T value) noexcept
+	template <class U>
+	constexpr Vec &operator-=(Vec<3, U> v) noexcept
 	{
-		x += value;
-		y += value;
-		z += value;
+		x -= static_cast<T>(v.x);
+		y -= static_cast<T>(v.y);
+		z -= static_cast<T>(v.z);
 		return *this;
 	}
 
-	constexpr Vec3 &operator*=(T value) noexcept
+	template <class U>
+	constexpr Vec &operator*=(U value) noexcept
 	{
-		x *= value;
-		y *= value;
-		z *= value;
+		x *= static_cast<T>(value);
+		y *= static_cast<T>(value);
+		z *= static_cast<T>(value);
 		return *this;
 	}
 
-	constexpr Vec3 &operator/=(T value) noexcept
+	template <class U>
+	constexpr Vec &operator*=(Vec<1, U> v) noexcept
 	{
-		x /= value;
-		y /= value;
-		z /= value;
+		x *= static_cast<T>(v.x);
+		y *= static_cast<T>(v.x);
+		z *= static_cast<T>(v.x);
 		return *this;
 	}
 
-	constexpr bool operator==(Vec3 const &other) const noexcept
+	template <class U>
+	constexpr Vec &operator*=(Vec<3, U> v) noexcept
 	{
-		return x == other.x && y == other.y && z == other.z;
-	}
-
-	constexpr bool operator!=(Vec3 const &other) const noexcept
-	{
-		return !(*this == other);
-	}
-
-	constexpr auto norm() const noexcept { return std::sqrt(squaredNorm()); }
-
-	constexpr T squaredNorm() const noexcept { return (x * x) + (y * y) + (z * z); }
-
-	constexpr Vec3 &normalize() noexcept
-	{
-		*this /= norm();
+		x *= static_cast<T>(v.x);
+		y *= static_cast<T>(v.y);
+		z *= static_cast<T>(v.z);
 		return *this;
 	}
 
-	constexpr Vec3 normalized() const noexcept { return Vec3(*this).normalize(); }
-
-	constexpr auto angleTo(Vec3 const &other) const noexcept
+	template <class U>
+	constexpr Vec &operator/=(U value) noexcept
 	{
-		// TODO do we want the clamp
-		// need the clamp to prevent nan from acos
-		// argument can be slightly >1 from calculations
-		return std::acos(std::clamp(dot(other) / (norm() * other.norm()), -1.0f, 1.0f));
-	}
-
-	constexpr T squaredDistance(Vec3 const &other) const noexcept
-	{
-		T d_x = x - other.x;
-		T d_y = y - other.y;
-		T d_z = z - other.z;
-		return (d_x * d_x) + (d_y * d_y) + (d_z * d_z);
-	}
-
-	constexpr auto distance(Vec3 const &other) const noexcept
-	{
-		return std::sqrt(squaredDistance(other));
-	}
-
-	constexpr T squaredDistanceXY(Vec3 const &other) const noexcept
-	{
-		T d_x = x - other.x;
-		T d_y = y - other.y;
-		return (d_x * d_x) + (d_y * d_y);
-	}
-
-	constexpr auto distanceXY(Vec3 const &other) const noexcept
-	{
-		return std::sqrt(squaredDistanceXY(other));
-	}
-
-	static constexpr std::size_t size() noexcept { return 3; }
-
-	constexpr T min() const noexcept
-	{
-		return x <= y ? (x <= z ? x : z) : (y <= z ? y : z);
-	}
-
-	constexpr T max() const noexcept
-	{
-		return x >= y ? (x >= z ? x : z) : (y >= z ? y : z);
-	}
-
-	constexpr std::size_t minElementIndex() const noexcept
-	{
-		return x <= y ? (x <= z ? 0 : 2) : (y <= z ? 1 : 2);
-	}
-
-	constexpr std::size_t maxElementIndex() const noexcept
-	{
-		return x >= y ? (x >= z ? 0 : 2) : (y >= z ? 1 : 2);
-	}
-
-	constexpr Vec3 &ceil() noexcept
-	{
-		x = std::ceil(x);
-		y = std::ceil(y);
-		z = std::ceil(z);
+		x /= static_cast<T>(value);
+		y /= static_cast<T>(value);
+		z /= static_cast<T>(value);
 		return *this;
 	}
 
-	constexpr Vec3 ceil() const noexcept
+	template <class U>
+	constexpr Vec &operator/=(Vec<1, U> v) noexcept
 	{
-		return Vec3(std::ceil(x), std::ceil(y), std::ceil(z));
-	}
-
-	constexpr Vec3 &floor() noexcept
-	{
-		x = std::floor(x);
-		y = std::floor(y);
-		z = std::floor(z);
+		x /= static_cast<T>(v.x);
+		y /= static_cast<T>(v.x);
+		z /= static_cast<T>(v.x);
 		return *this;
 	}
 
-	constexpr Vec3 floor() const noexcept
+	template <class U>
+	constexpr Vec &operator/=(Vec<3, U> v) noexcept
 	{
-		return Vec3(std::floor(x), std::floor(y), std::floor(z));
-	}
-
-	constexpr Vec3 &trunc() noexcept
-	{
-		x = std::trunc(x);
-		y = std::trunc(y);
-		z = std::trunc(z);
+		x /= static_cast<T>(v.x);
+		y /= static_cast<T>(v.y);
+		z /= static_cast<T>(v.z);
 		return *this;
 	}
 
-	constexpr Vec3 trunc() const noexcept
+	template <class U>
+	constexpr Vec &operator%=(U value) noexcept
 	{
-		return Vec3(std::trunc(x), std::trunc(y), std::trunc(z));
-	}
-
-	constexpr Vec3 &round() noexcept
-	{
-		x = std::round(x);
-		y = std::round(y);
-		z = std::round(z);
+		x %= static_cast<T>(value);
+		y %= static_cast<T>(value);
+		z %= static_cast<T>(value);
 		return *this;
 	}
 
-	constexpr Vec3 round() const noexcept
+	template <class U>
+	constexpr Vec &operator%=(Vec<1, U> v) noexcept
 	{
-		return Vec3(std::round(x), std::round(y), std::round(z));
-	}
-
-	constexpr Vec3 &clamp(Vec3 const &min, Vec3 const &max) noexcept
-	{
-		x = std::clamp(x, min.x, max.x);
-		y = std::clamp(y, min.y, max.y);
-		z = std::clamp(z, min.z, max.z);
+		x %= static_cast<T>(v.x);
+		y %= static_cast<T>(v.x);
+		z %= static_cast<T>(v.x);
 		return *this;
 	}
 
-	constexpr Vec3 clamp(Vec3 const &min, Vec3 const &max) const noexcept
+	template <class U>
+	constexpr Vec &operator%=(Vec<3, U> v) noexcept
 	{
-		return clamp(*this, min, max);
-	}
-
-	static constexpr Vec3 clamp(Vec3 const &value, Vec3 const &min,
-	                            Vec3 const &max) noexcept
-	{
-		return Vec3(std::clamp(value.x, min.x, max.x), std::clamp(value.y, min.y, max.y),
-		            std::clamp(value.z, min.z, max.z));
-	}
-
-	constexpr Vec3 &abs() noexcept
-	{
-		x = std::abs(x);
-		y = std::abs(y);
-		z = std::abs(z);
+		x %= static_cast<T>(v.x);
+		y %= static_cast<T>(v.y);
+		z %= static_cast<T>(v.z);
 		return *this;
 	}
 
-	constexpr Vec3 abs() const noexcept { return abs(*this); }
-
-	static constexpr Vec3 abs(Vec3 const &value)
+	template <class U>
+	constexpr Vec &operator&=(U value) noexcept
 	{
-		return Vec3(std::abs(value.x), std::abs(value.y), std::abs(value.z));
+		x &= static_cast<T>(value);
+		y &= static_cast<T>(value);
+		z &= static_cast<T>(value);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator&=(Vec<1, U> v) noexcept
+	{
+		x &= static_cast<T>(v.x);
+		y &= static_cast<T>(v.x);
+		z &= static_cast<T>(v.x);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator&=(Vec<3, U> v) noexcept
+	{
+		x &= static_cast<T>(v.x);
+		y &= static_cast<T>(v.y);
+		z &= static_cast<T>(v.z);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator|=(U value) noexcept
+	{
+		x |= static_cast<T>(value);
+		y |= static_cast<T>(value);
+		z |= static_cast<T>(value);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator|=(Vec<1, U> v) noexcept
+	{
+		x |= static_cast<T>(v.x);
+		y |= static_cast<T>(v.x);
+		z |= static_cast<T>(v.x);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator|=(Vec<3, U> v) noexcept
+	{
+		x |= static_cast<T>(v.x);
+		y |= static_cast<T>(v.y);
+		z |= static_cast<T>(v.z);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator^=(U value) noexcept
+	{
+		x ^= static_cast<T>(value);
+		y ^= static_cast<T>(value);
+		z ^= static_cast<T>(value);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator^=(Vec<1, U> v) noexcept
+	{
+		x ^= static_cast<T>(v.x);
+		y ^= static_cast<T>(v.x);
+		z ^= static_cast<T>(v.x);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator^=(Vec<3, U> v) noexcept
+	{
+		x ^= static_cast<T>(v.x);
+		y ^= static_cast<T>(v.y);
+		z ^= static_cast<T>(v.z);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator<<=(U value) noexcept
+	{
+		x <<= static_cast<T>(value);
+		y <<= static_cast<T>(value);
+		z <<= static_cast<T>(value);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator<<=(Vec<1, U> v) noexcept
+	{
+		x <<= static_cast<T>(v.x);
+		y <<= static_cast<T>(v.x);
+		z <<= static_cast<T>(v.x);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator<<=(Vec<3, U> v) noexcept
+	{
+		x <<= static_cast<T>(v.x);
+		y <<= static_cast<T>(v.y);
+		z <<= static_cast<T>(v.z);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator>>=(U value) noexcept
+	{
+		x >>= static_cast<T>(value);
+		y >>= static_cast<T>(value);
+		z >>= static_cast<T>(value);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator>>=(Vec<1, U> v) noexcept
+	{
+		x >>= static_cast<T>(v.x);
+		y >>= static_cast<T>(v.x);
+		z >>= static_cast<T>(v.x);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator>>=(Vec<3, U> v) noexcept
+	{
+		x >>= static_cast<T>(v.x);
+		y >>= static_cast<T>(v.y);
+		z >>= static_cast<T>(v.z);
+		return *this;
+	}
+
+	/**************************************************************************************
+	|                                                                                     |
+	|                                      Capacity                                       |
+	|                                                                                     |
+	**************************************************************************************/
+
+	[[nodiscard]] static constexpr size_type size() noexcept { return 3; }
+
+	/**************************************************************************************
+	|                                                                                     |
+	|                                     Operations                                      |
+	|                                                                                     |
+	**************************************************************************************/
+
+	void swap(Vec &other) noexcept
+	{
+		std::swap(x, other.x);
+		std::swap(y, other.y);
+		std::swap(z, other.z);
 	}
 };
 
-// Addition
-template <class T>
-constexpr Vec3<T> operator+(Vec3<T> const &lhs, Vec3<T> const &rhs) noexcept
-{
-	return Vec3<T>(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
-}
+/**************************************************************************************
+|                                                                                     |
+|                                  Binary operators                                   |
+|                                                                                     |
+**************************************************************************************/
 
 template <class T>
-constexpr Vec3<T> operator+(Vec3<T> const &lhs, T rhs) noexcept
+[[nodiscard]] constexpr Vec<3, T> operator+(Vec<3, T> v, T value) noexcept
 {
-	return Vec3(lhs.x + rhs, lhs.y + rhs, lhs.z + rhs);
-}
-
-template <class T>
-constexpr Vec3<T> operator+(T const &lhs, Vec3<T> const &rhs)
-{
-	return {lhs + rhs.x, lhs + rhs.y, lhs + rhs.z};
-}
-
-// Subtraction
-template <class T>
-constexpr Vec3<T> operator-(Vec3<T> const &lhs, Vec3<T> const &rhs)
-{
-	return {lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z};
+	return {v.x + value, v.y + value, v.z + value};
 }
 
 template <class T>
-constexpr Vec3<T> operator-(Vec3<T> const &lhs, T const &rhs)
+[[nodiscard]] constexpr Vec<3, T> operator+(Vec<3, T> v1, Vec<1, T> v2) noexcept
 {
-	return {lhs.x - rhs, lhs.y - rhs, lhs.z - rhs};
+	return {v1.x + v2.x, v1.y + v2.x, v1.z + v2.x};
 }
 
 template <class T>
-constexpr Vec3<T> operator-(T const &lhs, Vec3<T> const &rhs)
+[[nodiscard]] constexpr Vec<3, T> operator+(T value, Vec<3, T> v) noexcept
 {
-	return {lhs - rhs.x, lhs - rhs.y, lhs - rhs.z};
+	return {value + v.x, value + v.y, value + v.z};
 }
 
 template <class T>
-constexpr Vec3<T> operator-(Vec3<T> const &val)
+[[nodiscard]] constexpr Vec<3, T> operator+(Vec<1, T> v1, Vec<3, T> v2) noexcept
 {
-	return {-val.x, -val.y, -val.z};
-}
-
-// Multiplication
-template <class T>
-constexpr Vec3<T> operator*(Vec3<T> const &lhs, Vec3<T> const &rhs)
-{
-	return {lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z};
+	return {v1.x + v2.x, v1.x + v2.y, v1.x + v2.z};
 }
 
 template <class T>
-constexpr Vec3<T> operator*(Vec3<T> const &lhs, T const &rhs)
+[[nodiscard]] constexpr Vec<3, T> operator+(Vec<3, T> v1, Vec<3, T> v2) noexcept
 {
-	return {lhs.x * rhs, lhs.y * rhs, lhs.z * rhs};
+	return {v1.x + v2.x, v1.y + v2.y, v1.z + v2.z};
 }
 
 template <class T>
-constexpr Vec3<T> operator*(T const &lhs, Vec3<T> const &rhs)
+[[nodiscard]] constexpr Vec<3, T> operator-(Vec<3, T> v, T value) noexcept
 {
-	return {lhs * rhs.x, lhs * rhs.y, lhs * rhs.z};
-}
-
-// Division
-template <class T>
-constexpr Vec3<T> operator/(Vec3<T> const &lhs, Vec3<T> const &rhs)
-{
-	return {lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z};
+	return {v.x - value, v.y - value, v.z - value};
 }
 
 template <class T>
-constexpr Vec3<T> operator/(Vec3<T> const &lhs, T const &rhs)
+[[nodiscard]] constexpr Vec<3, T> operator-(Vec<3, T> v1, Vec<1, T> v2) noexcept
 {
-	return {lhs.x / rhs, lhs.y / rhs, lhs.z / rhs};
+	return {v1.x - v2.x, v1.y - v2.x, v1.z - v2.x};
 }
 
 template <class T>
-constexpr Vec3<T> operator/(T const &lhs, Vec3<T> const &rhs)
+[[nodiscard]] constexpr Vec<3, T> operator-(T value, Vec<3, T> v) noexcept
 {
-	return {lhs / rhs.x, lhs / rhs.y, lhs / rhs.z};
+	return {value - v.x, value - v.y, value - v.z};
 }
 
-template <typename T>
-std::ostream &operator<<(std::ostream &out, ufo::Vec3<T> vec)
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator-(Vec<1, T> v1, Vec<3, T> v2) noexcept
 {
-	return out << "x: " << vec.x << " y: " << vec.y << " z: " << vec.z;
+	return {v1.x - v2.x, v1.x - v2.y, v1.x - v2.z};
 }
 
-using Vec3f = Vec3<float>;
-using Vec3d = Vec3<double>;
-using Vec3i = Vec3<int>;
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator-(Vec<3, T> v1, Vec<3, T> v2) noexcept
+{
+	return {v1.x - v2.x, v1.y - v2.y, v1.z - v2.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator*(Vec<3, T> v, T value) noexcept
+{
+	return {v.x * value, v.y * value, v.z * value};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator*(Vec<3, T> v1, Vec<1, T> v2) noexcept
+{
+	return {v1.x * v2.x, v1.y * v2.x, v1.z * v2.x};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator*(T value, Vec<3, T> v) noexcept
+{
+	return {value * v.x, value * v.y, value * v.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator*(Vec<1, T> v1, Vec<3, T> v2) noexcept
+{
+	return {v1.x * v2.x, v1.x * v2.y, v1.x * v2.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator*(Vec<3, T> v1, Vec<3, T> v2) noexcept
+{
+	return {v1.x * v2.x, v1.y * v2.y, v1.z * v2.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator/(Vec<3, T> v, T value) noexcept
+{
+	return {v.x / value, v.y / value, v.z / value};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator/(Vec<3, T> v1, Vec<1, T> v2) noexcept
+{
+	return {v1.x / v2.x, v1.y / v2.x, v1.z / v2.x};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator/(T value, Vec<3, T> v) noexcept
+{
+	return {value / v.x, value / v.y, value / v.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator/(Vec<1, T> v1, Vec<3, T> v2) noexcept
+{
+	return {v1.x / v2.x, v1.x / v2.y, v1.x / v2.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator/(Vec<3, T> v1, Vec<3, T> v2) noexcept
+{
+	return {v1.x / v2.x, v1.y / v2.y, v1.z / v2.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator%(Vec<3, T> v, T value) noexcept
+{
+	return {v.x % value, v.y % value, v.z % value};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator%(Vec<3, T> v1, Vec<1, T> v2) noexcept
+{
+	return {v1.x % v2.x, v1.y % v2.x, v1.z % v2.x};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator%(T value, Vec<3, T> v) noexcept
+{
+	return {value % v.x, value % v.y, value % v.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator%(Vec<1, T> v1, Vec<3, T> v2) noexcept
+{
+	return {v1.x % v2.x, v1.x % v2.y, v1.x % v2.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator%(Vec<3, T> v1, Vec<3, T> v2) noexcept
+{
+	return {v1.x % v2.x, v1.y % v2.y, v1.z % v2.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator&(Vec<3, T> v, T value) noexcept
+{
+	return {v.x & value, v.y & value, v.z & value};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator&(Vec<3, T> v1, Vec<1, T> v2) noexcept
+{
+	return {v1.x & v2.x, v1.y & v2.x, v1.z & v2.x};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator&(T value, Vec<3, T> v) noexcept
+{
+	return {value & v.x, value & v.y, value & v.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator&(Vec<1, T> v1, Vec<3, T> v2) noexcept
+{
+	return {v1.x & v2.x, v1.x & v2.y, v1.x & v2.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator&(Vec<3, T> v1, Vec<3, T> v2) noexcept
+{
+	return {v1.x & v2.x, v1.y & v2.y, v1.z & v2.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator|(Vec<3, T> v, T value) noexcept
+{
+	return {v.x | value, v.y | value, v.z | value};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator|(Vec<3, T> v1, Vec<1, T> v2) noexcept
+{
+	return {v1.x | v2.x, v1.y | v2.x, v1.z | v2.x};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator|(T value, Vec<3, T> v) noexcept
+{
+	return {value | v.x, value | v.y, value | v.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator|(Vec<1, T> v1, Vec<3, T> v2) noexcept
+{
+	return {v1.x | v2.x, v1.x | v2.y, v1.x | v2.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator|(Vec<3, T> v1, Vec<3, T> v2) noexcept
+{
+	return {v1.x | v2.x, v1.y | v2.y, v1.z | v2.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator^(Vec<3, T> v, T value) noexcept
+{
+	return {v.x ^ value, v.y ^ value, v.z ^ value};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator^(Vec<3, T> v1, Vec<1, T> v2) noexcept
+{
+	return {v1.x ^ v2.x, v1.y ^ v2.x, v1.z ^ v2.x};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator^(T value, Vec<3, T> v) noexcept
+{
+	return {value ^ v.x, value ^ v.y, value ^ v.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator^(Vec<1, T> v1, Vec<3, T> v2) noexcept
+{
+	return {v1.x ^ v2.x, v1.x ^ v2.y, v1.x ^ v2.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator^(Vec<3, T> v1, Vec<3, T> v2) noexcept
+{
+	return {v1.x ^ v2.x, v1.y ^ v2.y, v1.z ^ v2.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator<<(Vec<3, T> v, T value) noexcept
+{
+	return {v.x << value, v.y << value, v.z << value};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator<<(Vec<3, T> v1, Vec<1, T> v2) noexcept
+{
+	return {v1.x << v2.x, v1.y << v2.x, v1.z << v2.x};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator<<(T value, Vec<3, T> v) noexcept
+{
+	return {value << v.x, value << v.y, value << v.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator<<(Vec<1, T> v1, Vec<3, T> v2) noexcept
+{
+	return {v1.x << v2.x, v1.x << v2.y, v1.x << v2.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator<<(Vec<3, T> v1, Vec<3, T> v2) noexcept
+{
+	return {v1.x << v2.x, v1.y << v2.y, v1.z << v2.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator>>(Vec<3, T> v, T value) noexcept
+{
+	return {v.x >> value, v.y >> value, v.z >> value};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator>>(Vec<3, T> v1, Vec<1, T> v2) noexcept
+{
+	return {v1.x >> v2.x, v1.y >> v2.x, v1.z >> v2.x};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator>>(T value, Vec<3, T> v) noexcept
+{
+	return {value >> v.x, value >> v.y, value >> v.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator>>(Vec<1, T> v1, Vec<3, T> v2) noexcept
+{
+	return {v1.x >> v2.x, v1.x >> v2.y, v1.x >> v2.z};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<3, T> operator>>(Vec<3, T> v1, Vec<3, T> v2) noexcept
+{
+	return {v1.x >> v2.x, v1.y >> v2.y, v1.z >> v2.z};
+}
+
+[[nodiscard]] constexpr Vec<3, bool> operator&&(Vec<3, bool> v1, Vec<3, bool> v2)
+{
+	return {v1.x && v2.x, v1.y && v2.y, v1.z && v2.z};
+}
+
+[[nodiscard]] constexpr Vec<3, bool> operator||(Vec<3, bool> v1, Vec<3, bool> v2)
+{
+	return {v1.x || v2.x, v1.y || v2.y, v1.z || v2.z};
+}
+
+/**************************************************************************************
+|                                                                                     |
+|                                       Compare                                       |
+|                                                                                     |
+**************************************************************************************/
+
+template <class T>
+[[nodiscard]] constexpr bool operator==(Vec<3, T> lhs, Vec<3, T> rhs) noexcept
+{
+	return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z;
+}
+
+template <class T>
+[[nodiscard]] constexpr bool operator!=(Vec<3, T> lhs, Vec<3, T> rhs) noexcept
+{
+	return !(lhs == rhs);
+}
 }  // namespace ufo
 
 #endif  // UFO_MATH_VEC3_HPP

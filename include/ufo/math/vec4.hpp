@@ -1,12 +1,14 @@
 /*!
- * UFOMap: An Efficient Probabilistic 3D Mapping Framework That Embraces the Unknown
+ * UFOMap: An Efficient Probabilistic 3D Mapping Framework That Embraces the
+ * Unknown
  *
  * @author Daniel Duberg (dduberg@kth.se)
  * @see https://github.com/UnknownFreeOccupied/ufomap
  * @version 1.0
  * @date 2022-05-13
  *
- * @copyright Copyright (c) 2022, Daniel Duberg, KTH Royal Institute of Technology
+ * @copyright Copyright (c) 2022, Daniel Duberg, KTH Royal Institute of
+ * Technology
  *
  * BSD 3-Clause License
  *
@@ -16,8 +18,8 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * 1. Redistributions of source code must retain the above copyright notice, this
- *     list of conditions and the following disclaimer.
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *     this list of conditions and the following disclaimer in the documentation
@@ -29,53 +31,370 @@
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TOROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef UFO_MATH_VEC4_HPP
 #define UFO_MATH_VEC4_HPP
+// UFO
+#include <ufo/math/detail/vec.hpp>
+#include <ufo/math/detail/vec_fun.hpp>
 
 // STL
-#include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <cstddef>
-#include <ostream>
+#include <utility>
 
 namespace ufo
 {
-template <typename T>
-struct Vec4 {
-	T x = 0;
-	T y = 0;
-	T z = 0;
-	T w = 0;
+template <class T>
+struct Vec<4, T> {
+	using value_type = T;
+	using size_type  = std::size_t;
 
-	constexpr Vec4() noexcept = default;
+	T x{};
+	T y{};
+	T z{};
+	T w{};
 
-	constexpr Vec4(T x, T y, T z, T w) noexcept : x(x), y(y), z(z), w(w) {}
+	/**************************************************************************************
+	|                                                                                     |
+	|                                    Constructors                                     |
+	|                                                                                     |
+	**************************************************************************************/
 
-	constexpr Vec4(Vec4 const&) noexcept = default;  // Redundant
+	constexpr Vec() noexcept            = default;
+	constexpr Vec(Vec const &) noexcept = default;
 
-	template <typename T2, class = std::enable_if_t<not std::is_same_v<T, T2>>>
-	constexpr Vec4(Vec4<T2> const other) noexcept
-	    : x(static_cast<T>(other.x))
-	    , y(static_cast<T>(other.y))
-	    , z(static_cast<T>(other.z))
-	    , w(static_cast<T>(other.w))
+	constexpr explicit Vec(T value) noexcept : x(value), y(value), z(value), w(value) {}
+
+	constexpr Vec(T x, T y, T z, T w) noexcept : x(x), y(y), z(z), w(w) {}
+
+	template <class U>
+	constexpr explicit Vec(Vec<1, U> v) noexcept
+	    : x(static_cast<T>(v.x))
+	    , y(static_cast<T>(v.x))
+	    , z(static_cast<T>(v.x))
+	    , w(static_cast<T>(v.x))
 	{
 	}
 
-	constexpr Vec4& operator=(Vec4 const&) noexcept = default;  // Redundant
+	template <class X, class Y, class Z, class W>
+	constexpr Vec(X x, Y y, Z z, W w) noexcept
+	    : x(static_cast<T>(x))
+	    , y(static_cast<T>(y))
+	    , z(static_cast<T>(z))
+	    , w(static_cast<T>(w))
+	{
+	}
 
-	template <typename T2, class = std::enable_if_t<not std::is_same_v<T, T2>>>
-	constexpr Vec4& operator=(Vec4<T2> const rhs) noexcept
+	template <class X, class Y, class Z, class W>
+	constexpr Vec(Vec<1, X> x, Y y, Z z, W w) noexcept
+	    : x(static_cast<T>(x.x))
+	    , y(static_cast<T>(y))
+	    , z(static_cast<T>(z))
+	    , w(static_cast<T>(w))
+	{
+	}
+
+	template <class X, class Y, class Z, class W>
+	constexpr Vec(X x, Vec<1, Y> y, Z z, W w) noexcept
+	    : x(static_cast<T>(x))
+	    , y(static_cast<T>(y.x))
+	    , z(static_cast<T>(z))
+	    , w(static_cast<T>(w))
+	{
+	}
+
+	template <class X, class Y, class Z, class W>
+	constexpr Vec(Vec<1, X> x, Vec<1, Y> y, Z z, W w) noexcept
+	    : x(static_cast<T>(x.x))
+	    , y(static_cast<T>(y.x))
+	    , z(static_cast<T>(z))
+	    , w(static_cast<T>(w))
+	{
+	}
+
+	template <class X, class Y, class Z, class W>
+	constexpr Vec(X x, Y y, Vec<1, Z> z, W w) noexcept
+	    : x(static_cast<T>(x))
+	    , y(static_cast<T>(y))
+	    , z(static_cast<T>(z.x))
+	    , w(static_cast<T>(w))
+	{
+	}
+
+	template <class X, class Y, class Z, class W>
+	constexpr Vec(Vec<1, X> x, Y y, Vec<1, Z> z, W w) noexcept
+	    : x(static_cast<T>(x.x))
+	    , y(static_cast<T>(y))
+	    , z(static_cast<T>(z.x))
+	    , w(static_cast<T>(w))
+	{
+	}
+
+	template <class X, class Y, class Z, class W>
+	constexpr Vec(X x, Vec<1, Y> y, Vec<1, Z> z, W w) noexcept
+	    : x(static_cast<T>(x))
+	    , y(static_cast<T>(y.x))
+	    , z(static_cast<T>(z.x))
+	    , w(static_cast<T>(w))
+	{
+	}
+
+	template <class X, class Y, class Z, class W>
+	constexpr Vec(Vec<1, X> x, Vec<1, Y> y, Vec<1, Z> z, W w) noexcept
+	    : x(static_cast<T>(x.x))
+	    , y(static_cast<T>(y.x))
+	    , z(static_cast<T>(z.x))
+	    , w(static_cast<T>(w))
+	{
+	}
+
+	template <class X, class Y, class Z, class W>
+	constexpr Vec(Vec<1, X> x, Y y, Z z, Vec<1, W> w) noexcept
+	    : x(static_cast<T>(x.x))
+	    , y(static_cast<T>(y))
+	    , z(static_cast<T>(z))
+	    , w(static_cast<T>(w.x))
+	{
+	}
+
+	template <class X, class Y, class Z, class W>
+	constexpr Vec(X x, Vec<1, Y> y, Z z, Vec<1, W> w) noexcept
+	    : x(static_cast<T>(x))
+	    , y(static_cast<T>(y.x))
+	    , z(static_cast<T>(z))
+	    , w(static_cast<T>(w.x))
+	{
+	}
+
+	template <class X, class Y, class Z, class W>
+	constexpr Vec(Vec<1, X> x, Vec<1, Y> y, Z z, Vec<1, W> w) noexcept
+	    : x(static_cast<T>(x.x))
+	    , y(static_cast<T>(y.x))
+	    , z(static_cast<T>(z))
+	    , w(static_cast<T>(w.x))
+	{
+	}
+
+	template <class X, class Y, class Z, class W>
+	constexpr Vec(X x, Y y, Vec<1, Z> z, Vec<1, W> w) noexcept
+	    : x(static_cast<T>(x))
+	    , y(static_cast<T>(y))
+	    , z(static_cast<T>(z.x))
+	    , w(static_cast<T>(w.x))
+	{
+	}
+
+	template <class X, class Y, class Z, class W>
+	constexpr Vec(Vec<1, X> x, Y y, Vec<1, Z> z, Vec<1, W> w) noexcept
+	    : x(static_cast<T>(x.x))
+	    , y(static_cast<T>(y))
+	    , z(static_cast<T>(z.x))
+	    , w(static_cast<T>(w.x))
+	{
+	}
+
+	template <class X, class Y, class Z, class W>
+	constexpr Vec(X x, Vec<1, Y> y, Vec<1, Z> z, Vec<1, W> w) noexcept
+	    : x(static_cast<T>(x))
+	    , y(static_cast<T>(y.x))
+	    , z(static_cast<T>(z.x))
+	    , w(static_cast<T>(w.x))
+	{
+	}
+
+	template <class X, class Y, class Z, class W>
+	constexpr Vec(Vec<1, X> x, Vec<1, Y> y, Vec<1, Z> z, Vec<1, W> w) noexcept
+	    : x(static_cast<T>(x.x))
+	    , y(static_cast<T>(y.x))
+	    , z(static_cast<T>(z.x))
+	    , w(static_cast<T>(w.x))
+	{
+	}
+
+	template <class XY, class Z, class W>
+	constexpr Vec(Vec<2, XY> xy, Z z, W w) noexcept
+	    : x(static_cast<T>(xy.x))
+	    , y(static_cast<T>(xy.y))
+	    , z(static_cast<T>(z))
+	    , w(static_cast<T>(w))
+	{
+	}
+
+	template <class XY, class Z, class W>
+	constexpr Vec(Vec<2, XY> xy, Vec<1, Z> z, W w) noexcept
+	    : x(static_cast<T>(xy.x))
+	    , y(static_cast<T>(xy.y))
+	    , z(static_cast<T>(z.x))
+	    , w(static_cast<T>(w))
+	{
+	}
+
+	template <class XY, class Z, class W>
+	constexpr Vec(Vec<2, XY> xy, Z z, Vec<1, W> w) noexcept
+	    : x(static_cast<T>(xy.x))
+	    , y(static_cast<T>(xy.y))
+	    , z(static_cast<T>(z))
+	    , w(static_cast<T>(w.x))
+	{
+	}
+
+	template <class XY, class Z, class W>
+	constexpr Vec(Vec<2, XY> xy, Vec<1, Z> z, Vec<1, W> w) noexcept
+	    : x(static_cast<T>(xy.x))
+	    , y(static_cast<T>(xy.y))
+	    , z(static_cast<T>(z.x))
+	    , w(static_cast<T>(w.x))
+	{
+	}
+
+	template <class X, class YZ, class W>
+	constexpr Vec(X x, Vec<2, YZ> yz, W w) noexcept
+	    : x(static_cast<T>(x))
+	    , y(static_cast<T>(yz.x))
+	    , z(static_cast<T>(yz.y))
+	    , w(static_cast<T>(w))
+	{
+	}
+
+	template <class X, class YZ, class W>
+	constexpr Vec(Vec<1, X> x, Vec<2, YZ> yz, W w) noexcept
+	    : x(static_cast<T>(x.x))
+	    , y(static_cast<T>(yz.x))
+	    , z(static_cast<T>(yz.y))
+	    , w(static_cast<T>(w))
+	{
+	}
+
+	template <class X, class YZ, class W>
+	constexpr Vec(X x, Vec<2, YZ> yz, Vec<1, W> w) noexcept
+	    : x(static_cast<T>(x))
+	    , y(static_cast<T>(yz.x))
+	    , z(static_cast<T>(yz.y))
+	    , w(static_cast<T>(w.x))
+	{
+	}
+
+	template <class X, class YZ, class W>
+	constexpr Vec(Vec<1, X> x, Vec<2, YZ> yz, Vec<1, W> w) noexcept
+	    : x(static_cast<T>(x.x))
+	    , y(static_cast<T>(yz.x))
+	    , z(static_cast<T>(yz.y))
+	    , w(static_cast<T>(w.x))
+	{
+	}
+
+	template <class X, class Y, class ZW>
+	constexpr Vec(X x, Y y, Vec<2, ZW> zw) noexcept
+	    : x(static_cast<T>(x))
+	    , y(static_cast<T>(y))
+	    , z(static_cast<T>(zw.x))
+	    , w(static_cast<T>(zw.y))
+	{
+	}
+
+	template <class X, class Y, class ZW>
+	constexpr Vec(Vec<1, X> x, Y y, Vec<2, ZW> zw) noexcept
+	    : x(static_cast<T>(x.x))
+	    , y(static_cast<T>(y))
+	    , z(static_cast<T>(zw.x))
+	    , w(static_cast<T>(zw.y))
+	{
+	}
+
+	template <class X, class Y, class ZW>
+	constexpr Vec(X x, Vec<1, Y> y, Vec<2, ZW> zw) noexcept
+	    : x(static_cast<T>(x))
+	    , y(static_cast<T>(y.x))
+	    , z(static_cast<T>(zw.x))
+	    , w(static_cast<T>(zw.y))
+	{
+	}
+
+	template <class X, class Y, class ZW>
+	constexpr Vec(Vec<1, X> x, Vec<1, Y> y, Vec<2, ZW> zw) noexcept
+	    : x(static_cast<T>(x.x))
+	    , y(static_cast<T>(y.x))
+	    , z(static_cast<T>(zw.x))
+	    , w(static_cast<T>(zw.y))
+	{
+	}
+
+	template <class XY, class ZW>
+	constexpr explicit Vec(Vec<2, XY> xy, Vec<2, ZW> zw) noexcept
+	    : x(static_cast<T>(xy.x))
+	    , y(static_cast<T>(xy.y))
+	    , z(static_cast<T>(zw.x))
+	    , w(static_cast<T>(zw.y))
+	{
+	}
+
+	template <class XYZ, class W>
+	constexpr explicit Vec(Vec<3, XYZ> xyz, W w) noexcept
+	    : x(static_cast<T>(xyz.x))
+	    , y(static_cast<T>(xyz.y))
+	    , z(static_cast<T>(xyz.z))
+	    , w(static_cast<T>(w))
+	{
+	}
+
+	template <class XYZ, class W>
+	constexpr explicit Vec(Vec<3, XYZ> xyz, Vec<1, W> w) noexcept
+	    : x(static_cast<T>(xyz.x))
+	    , y(static_cast<T>(xyz.y))
+	    , z(static_cast<T>(xyz.z))
+	    , w(static_cast<T>(w.x))
+	{
+	}
+
+	template <class X, class YZW>
+	constexpr explicit Vec(X x, Vec<3, YZW> yzw) noexcept
+	    : x(static_cast<T>(x))
+	    , y(static_cast<T>(yzw.x))
+	    , z(static_cast<T>(yzw.y))
+	    , w(static_cast<T>(yzw.z))
+	{
+	}
+
+	template <class X, class YZW>
+	constexpr explicit Vec(Vec<1, X> x, Vec<3, YZW> yzw) noexcept
+	    : x(static_cast<T>(x.x))
+	    , y(static_cast<T>(yzw.x))
+	    , z(static_cast<T>(yzw.y))
+	    , w(static_cast<T>(yzw.z))
+	{
+	}
+
+	template <class U>
+	constexpr explicit Vec(Vec<4, U> v) noexcept
+	    : x(static_cast<T>(v.x))
+	    , y(static_cast<T>(v.y))
+	    , z(static_cast<T>(v.z))
+	    , w(static_cast<T>(v.w))
+	{
+	}
+
+	/**************************************************************************************
+	|                                                                                     |
+	|                                 Assignment operator                                 |
+	|                                                                                     |
+	**************************************************************************************/
+
+	constexpr Vec &operator=(Vec const &) noexcept = default;
+
+	template <class U>
+	constexpr Vec &operator=(Vec<4, U> rhs) noexcept
 	{
 		x = static_cast<T>(rhs.x);
 		y = static_cast<T>(rhs.y);
@@ -84,316 +403,698 @@ struct Vec4 {
 		return *this;
 	}
 
-	constexpr Vec4 cross(Vec4 const& other) const noexcept { return cross(*this, other); }
+	/**************************************************************************************
+	|                                                                                     |
+	|                                   Element access                                    |
+	|                                                                                     |
+	**************************************************************************************/
 
-	static constexpr Vec4 cross(Vec4 const& first, Vec4 const& second) noexcept
+	[[nodiscard]] constexpr T &operator[](size_type pos) noexcept
 	{
-		// TODO: Implement
-		return Vec4((first.y * second.z) - (first.z * second.y),
-		            (first.z * second.x) - (first.x * second.z),
-		            (first.x * second.y) - (first.y * second.x));
+		assert(size() > pos);
+		return (&x)[pos];
 	}
 
-	constexpr T dot(Vec4 const& other) const noexcept { return dot(*this, other); }
-
-	static constexpr T dot(Vec4 const& first, Vec4 const& second) noexcept
+	[[nodiscard]] constexpr T operator[](size_type pos) const noexcept
 	{
-		// TODO: Implement
-		return (first.x * second.x) + (first.y * second.y) + (first.z * second.z);
+		assert(size() > pos);
+		return (&x)[pos];
 	}
 
-	constexpr T& operator()(size_t idx) noexcept { return *(&x + idx); }
+	/**************************************************************************************
+	|                                                                                     |
+	|                              Unary arithmetic operator                              |
+	|                                                                                     |
+	**************************************************************************************/
 
-	constexpr T const& operator()(size_t idx) const noexcept { return *(&x + idx); }
+	constexpr Vec operator+() const noexcept { return *this; }
 
-	constexpr T& operator[](size_t idx) noexcept { return *(&x + idx); }
+	constexpr Vec operator-() const noexcept { return {-x, -y, -z, -w}; }
 
-	constexpr T const& operator[](size_t idx) const noexcept { return *(&x + idx); }
+	constexpr Vec operator~() const noexcept { return {~x, ~y, ~z, ~w}; }
 
-	constexpr Vec4 operator-() const noexcept { return Vec4(-x, -y, -z, -w); }
+	/**************************************************************************************
+	|                                                                                     |
+	|                            Compound assignment operator                             |
+	|                                                                                     |
+	**************************************************************************************/
 
-	constexpr Vec4 operator-(Vec4 const& other) const noexcept
+	template <class U>
+	constexpr Vec &operator+=(U value) noexcept
 	{
-		return Vec4(x - other.x, y - other.y, z - other.z, w - other.w);
-	}
-
-	constexpr Vec4 operator-(T value) const noexcept
-	{
-		return Vec4(x - value, y - value, z - value, w - value);
-	}
-
-	constexpr Vec4 operator+(Vec4 const& other) const noexcept
-	{
-		return Vec4(x + other.x, y + other.y, z + other.z, w + other.z);
-	}
-
-	constexpr Vec4 operator+(T value) const noexcept
-	{
-		return Vec4(x + value, y + value, z + value, w + value);
-	}
-
-	constexpr Vec4 operator*(Vec4 const& other) const noexcept
-	{
-		return Vec4(x * other.x, y * other.y, z * other.z, w * other.w);
-	}
-
-	constexpr Vec4 operator*(T value) const noexcept
-	{
-		return Vec4(x * value, y * value, z * value, w * value);
-	}
-
-	constexpr Vec4 operator/(Vec4 const& other) const noexcept
-	{
-		return Vec4(x / other.x, y / other.y, z / other.z, w / other.w);
-	}
-
-	constexpr Vec4 operator/(T value) const noexcept
-	{
-		return Vec4(x / value, y / value, z / value, w / value);
-	}
-
-	constexpr void operator-=(Vec4 const& other) noexcept
-	{
-		x -= other.x;
-		y -= other.y;
-		z -= other.z;
-		w -= other.w;
-	}
-
-	constexpr void operator+=(Vec4 const& other) noexcept
-	{
-		x += other.x;
-		y += other.y;
-		z += other.z;
-		w += other.w;
-	}
-
-	constexpr void operator*=(Vec4 const& other) noexcept
-	{
-		x *= other.x;
-		y *= other.y;
-		z *= other.z;
-		w *= other.w;
-	}
-
-	constexpr void operator/=(Vec4 const& other) noexcept
-	{
-		x /= other.x;
-		y /= other.y;
-		z /= other.z;
-		w /= other.w;
-	}
-
-	constexpr void operator-=(T value) noexcept
-	{
-		x -= value;
-		y -= value;
-		z -= value;
-		w -= value;
-	}
-
-	constexpr void operator+=(T value) noexcept
-	{
-		x += value;
-		y += value;
-		z += value;
-		w += value;
-	}
-
-	constexpr void operator*=(T value) noexcept
-	{
-		x *= value;
-		y *= value;
-		z *= value;
-		w *= value;
-	}
-
-	constexpr void operator/=(T value) noexcept
-	{
-		x /= value;
-		y /= value;
-		z /= value;
-		w /= value;
-	}
-
-	constexpr bool operator==(Vec4 const& other) const noexcept
-	{
-		return x == other.x && y == other.y && z == other.z && w == other.w;
-	}
-
-	constexpr bool operator!=(Vec4 const& other) const noexcept
-	{
-		return !(*this == other);
-	}
-
-	constexpr auto norm() const noexcept { return std::sqrt(squaredNorm()); }
-
-	constexpr T squaredNorm() const noexcept
-	{
-		return (x * x) + (y * y) + (z * z) + (w * w);
-	}
-
-	constexpr Vec4& normalize() noexcept
-	{
-		*this /= norm();
+		x += static_cast<T>(value);
+		y += static_cast<T>(value);
+		z += static_cast<T>(value);
+		w += static_cast<T>(value);
 		return *this;
 	}
 
-	constexpr Vec4 normalized() const noexcept { return Vec4(*this).normalize(); }
-
-	constexpr auto angleTo(Vec4 const& other) const noexcept
+	template <class U>
+	constexpr Vec &operator+=(Vec<1, U> v) noexcept
 	{
-		// TODO: Implement
-		return std::acos(dot(other) / (norm() * other.norm()));
-	}
-
-	constexpr T squaredDistance(Vec4 const& other) const noexcept
-	{
-		T d_x = x - other.x;
-		T d_y = y - other.y;
-		T d_z = z - other.z;
-		T d_w = w - other.w;
-		return (d_x * d_x) + (d_y * d_y) + (d_z * d_z) + (d_w * d_w);
-	}
-
-	constexpr auto distance(Vec4 const& other) const noexcept
-	{
-		return std::sqrt(squaredDistance(other));
-	}
-
-	constexpr T squaredDistanceXY(Vec4 const& other) const noexcept
-	{
-		T d_x = x - other.x;
-		T d_y = y - other.y;
-		return (d_x * d_x) + (d_y * d_y);
-	}
-
-	constexpr auto distanceXY(Vec4 const& other) const noexcept
-	{
-		return std::sqrt(squaredDistanceXY(other));
-	}
-
-	static constexpr std::size_t size() noexcept { return 3; }
-
-	constexpr T min() const noexcept { return std::min({x, y, z, w}); }
-
-	constexpr T max() const noexcept { return std::max({x, y, z, w}); }
-
-	constexpr std::size_t minElementIndex() const noexcept
-	{
-		return x <= y ? (x <= z ? (x <= w ? 0 : 3) : (z <= w ? 2 : 3))
-		              : (y <= z ? (y <= w ? 1 : 3) : (z <= w ? 2 : 3));
-	}
-
-	constexpr std::size_t maxElementIndex() const noexcept
-	{
-		return x >= y ? (x >= z ? (x >= w ? 0 : 3) : (z >= w ? 2 : 3))
-		              : (y >= z ? (y >= w ? 1 : 3) : (z >= w ? 2 : 3));
-	}
-
-	constexpr Vec4& ceil() noexcept
-	{
-		x = std::ceil(x);
-		y = std::ceil(y);
-		z = std::ceil(z);
-		w = std::ceil(w);
+		x += static_cast<T>(v.x);
+		y += static_cast<T>(v.x);
+		z += static_cast<T>(v.x);
+		w += static_cast<T>(v.x);
 		return *this;
 	}
 
-	constexpr Vec4 ceil() const noexcept
+	template <class U>
+	constexpr Vec &operator+=(Vec<4, U> v) noexcept
 	{
-		return Vec4(std::ceil(x), std::ceil(y), std::ceil(z), std::ceil(w));
-	}
-
-	constexpr Vec4& floor() noexcept
-	{
-		x = std::floor(x);
-		y = std::floor(y);
-		z = std::floor(z);
-		w = std::floor(w);
+		x += static_cast<T>(v.x);
+		y += static_cast<T>(v.y);
+		z += static_cast<T>(v.z);
+		w += static_cast<T>(v.w);
 		return *this;
 	}
 
-	constexpr Vec4 floor() const noexcept
+	template <class U>
+	constexpr Vec &operator-=(U value) noexcept
 	{
-		return Vec4(std::floor(x), std::floor(y), std::floor(z), std::floor(w));
-	}
-
-	constexpr Vec4& trunc() noexcept
-	{
-		x = std::trunc(x);
-		y = std::trunc(y);
-		z = std::trunc(z);
-		w = std::trunc(w);
+		x -= static_cast<T>(value);
+		y -= static_cast<T>(value);
+		z -= static_cast<T>(value);
+		w -= static_cast<T>(value);
 		return *this;
 	}
 
-	constexpr Vec4 trunc() const noexcept
+	template <class U>
+	constexpr Vec &operator-=(Vec<1, U> v) noexcept
 	{
-		return Vec4(std::trunc(x), std::trunc(y), std::trunc(z), std::trunc(w));
-	}
-
-	constexpr Vec4& round() noexcept
-	{
-		x = std::round(x);
-		y = std::round(y);
-		z = std::round(z);
-		w = std::round(w);
+		x -= static_cast<T>(v.x);
+		y -= static_cast<T>(v.x);
+		z -= static_cast<T>(v.x);
+		w -= static_cast<T>(v.x);
 		return *this;
 	}
 
-	constexpr Vec4 round() const noexcept
+	template <class U>
+	constexpr Vec &operator-=(Vec<4, U> v) noexcept
 	{
-		return Vec4(std::round(x), std::round(y), std::round(z), std::round(w));
-	}
-
-	constexpr Vec4& clamp(Vec4 const& min, Vec4 const& max) noexcept
-	{
-		x = std::clamp(x, min.x, max.x);
-		y = std::clamp(y, min.y, max.y);
-		z = std::clamp(z, min.z, max.z);
-		w = std::clamp(w, min.w, max.w);
+		x -= static_cast<T>(v.x);
+		y -= static_cast<T>(v.y);
+		z -= static_cast<T>(v.z);
+		w -= static_cast<T>(v.w);
 		return *this;
 	}
 
-	constexpr Vec4 clamp(Vec4 const& min, Vec4 const& max) const noexcept
+	template <class U>
+	constexpr Vec &operator*=(U value) noexcept
 	{
-		return clamp(*this, min, max);
-	}
-
-	static constexpr Vec4 clamp(Vec4 const& value, Vec4 const& min,
-	                            Vec4 const& max) noexcept
-	{
-		return Vec4(std::clamp(value.x, min.x, max.x), std::clamp(value.y, min.y, max.y),
-		            std::clamp(value.z, min.z, max.z), std::clamp(value.w, min.w, max.w));
-	}
-
-	constexpr Vec4& abs() noexcept
-	{
-		x = std::abs(x);
-		y = std::abs(y);
-		z = std::abs(z);
-		w = std::abs(w);
+		x *= static_cast<T>(value);
+		y *= static_cast<T>(value);
+		z *= static_cast<T>(value);
+		w *= static_cast<T>(value);
 		return *this;
 	}
 
-	constexpr Vec4 abs() const noexcept { return abs(*this); }
-
-	static constexpr Vec4 abs(Vec4 const& value)
+	template <class U>
+	constexpr Vec &operator*=(Vec<1, U> v) noexcept
 	{
-		return Vec4(std::abs(value.x), std::abs(value.y), std::abs(value.z),
-		            std::abs(value.w));
+		x *= static_cast<T>(v.x);
+		y *= static_cast<T>(v.x);
+		z *= static_cast<T>(v.x);
+		w *= static_cast<T>(v.x);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator*=(Vec<4, U> v) noexcept
+	{
+		x *= static_cast<T>(v.x);
+		y *= static_cast<T>(v.y);
+		z *= static_cast<T>(v.z);
+		w *= static_cast<T>(v.w);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator/=(U value) noexcept
+	{
+		x /= static_cast<T>(value);
+		y /= static_cast<T>(value);
+		z /= static_cast<T>(value);
+		w /= static_cast<T>(value);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator/=(Vec<1, U> v) noexcept
+	{
+		x /= static_cast<T>(v.x);
+		y /= static_cast<T>(v.x);
+		z /= static_cast<T>(v.x);
+		w /= static_cast<T>(v.x);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator/=(Vec<4, U> v) noexcept
+	{
+		x /= static_cast<T>(v.x);
+		y /= static_cast<T>(v.y);
+		z /= static_cast<T>(v.z);
+		w /= static_cast<T>(v.w);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator%=(U value) noexcept
+	{
+		x %= static_cast<T>(value);
+		y %= static_cast<T>(value);
+		z %= static_cast<T>(value);
+		w %= static_cast<T>(value);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator%=(Vec<1, U> v) noexcept
+	{
+		x %= static_cast<T>(v.x);
+		y %= static_cast<T>(v.x);
+		z %= static_cast<T>(v.x);
+		w %= static_cast<T>(v.x);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator%=(Vec<4, U> v) noexcept
+	{
+		x %= static_cast<T>(v.x);
+		y %= static_cast<T>(v.y);
+		z %= static_cast<T>(v.z);
+		w %= static_cast<T>(v.w);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator&=(U value) noexcept
+	{
+		x &= static_cast<T>(value);
+		y &= static_cast<T>(value);
+		z &= static_cast<T>(value);
+		w &= static_cast<T>(value);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator&=(Vec<1, U> v) noexcept
+	{
+		x &= static_cast<T>(v.x);
+		y &= static_cast<T>(v.x);
+		z &= static_cast<T>(v.x);
+		w &= static_cast<T>(v.x);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator&=(Vec<4, U> v) noexcept
+	{
+		x &= static_cast<T>(v.x);
+		y &= static_cast<T>(v.y);
+		z &= static_cast<T>(v.z);
+		w &= static_cast<T>(v.w);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator|=(U value) noexcept
+	{
+		x |= static_cast<T>(value);
+		y |= static_cast<T>(value);
+		z |= static_cast<T>(value);
+		w |= static_cast<T>(value);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator|=(Vec<1, U> v) noexcept
+	{
+		x |= static_cast<T>(v.x);
+		y |= static_cast<T>(v.x);
+		z |= static_cast<T>(v.x);
+		w |= static_cast<T>(v.x);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator|=(Vec<4, U> v) noexcept
+	{
+		x |= static_cast<T>(v.x);
+		y |= static_cast<T>(v.y);
+		z |= static_cast<T>(v.z);
+		w |= static_cast<T>(v.w);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator^=(U value) noexcept
+	{
+		x ^= static_cast<T>(value);
+		y ^= static_cast<T>(value);
+		z ^= static_cast<T>(value);
+		w ^= static_cast<T>(value);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator^=(Vec<1, U> v) noexcept
+	{
+		x ^= static_cast<T>(v.x);
+		y ^= static_cast<T>(v.x);
+		z ^= static_cast<T>(v.x);
+		w ^= static_cast<T>(v.x);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator^=(Vec<4, U> v) noexcept
+	{
+		x ^= static_cast<T>(v.x);
+		y ^= static_cast<T>(v.y);
+		z ^= static_cast<T>(v.z);
+		w ^= static_cast<T>(v.w);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator<<=(U value) noexcept
+	{
+		x <<= static_cast<T>(value);
+		y <<= static_cast<T>(value);
+		z <<= static_cast<T>(value);
+		w <<= static_cast<T>(value);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator<<=(Vec<1, U> v) noexcept
+	{
+		x <<= static_cast<T>(v.x);
+		y <<= static_cast<T>(v.x);
+		z <<= static_cast<T>(v.x);
+		w <<= static_cast<T>(v.x);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator<<=(Vec<4, U> v) noexcept
+	{
+		x <<= static_cast<T>(v.x);
+		y <<= static_cast<T>(v.y);
+		z <<= static_cast<T>(v.z);
+		w <<= static_cast<T>(v.w);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator>>=(U value) noexcept
+	{
+		x >>= static_cast<T>(value);
+		y >>= static_cast<T>(value);
+		z >>= static_cast<T>(value);
+		w >>= static_cast<T>(value);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator>>=(Vec<1, U> v) noexcept
+	{
+		x >>= static_cast<T>(v.x);
+		y >>= static_cast<T>(v.x);
+		z >>= static_cast<T>(v.x);
+		w >>= static_cast<T>(v.x);
+		return *this;
+	}
+
+	template <class U>
+	constexpr Vec &operator>>=(Vec<4, U> v) noexcept
+	{
+		x >>= static_cast<T>(v.x);
+		y >>= static_cast<T>(v.y);
+		z >>= static_cast<T>(v.z);
+		w >>= static_cast<T>(v.w);
+		return *this;
+	}
+
+	/**************************************************************************************
+	|                                                                                     |
+	|                                      Capacity                                       |
+	|                                                                                     |
+	**************************************************************************************/
+
+	[[nodiscard]] static constexpr size_type size() noexcept { return 4; }
+
+	/**************************************************************************************
+	|                                                                                     |
+	|                                     Operations                                      |
+	|                                                                                     |
+	**************************************************************************************/
+
+	void swap(Vec &other) noexcept
+	{
+		std::swap(x, other.x);
+		std::swap(y, other.y);
+		std::swap(z, other.z);
+		std::swap(w, other.w);
 	}
 };
 
-template <typename T>
-std::ostream &operator<<(std::ostream &out, ufo::Vec4<T> vec) {
-	return out << "x: " << vec.x << " y: " << vec.y << " z: " << vec.z << " w: " << vec.w;
+/**************************************************************************************
+|                                                                                     |
+|                                  Binary operators                                   |
+|                                                                                     |
+**************************************************************************************/
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator+(Vec<4, T> v, T value) noexcept
+{
+	return {v.x + value, v.y + value, v.z + value, v.w + value};
 }
 
-using Vec4f = Vec4<float>;
-using Vec4d = Vec4<double>;
-using Vec4i = Vec4<int>;
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator+(Vec<4, T> v1, Vec<1, T> v2) noexcept
+{
+	return {v1.x + v2.x, v1.y + v2.x, v1.z + v2.x, v1.w + v2.x};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator+(T value, Vec<4, T> v) noexcept
+{
+	return {value + v.x, value + v.y, value + v.z, value + v.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator+(Vec<1, T> v1, Vec<4, T> v2) noexcept
+{
+	return {v1.x + v2.x, v1.x + v2.y, v1.x + v2.z, v1.x + v2.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator+(Vec<4, T> v1, Vec<4, T> v2) noexcept
+{
+	return {v1.x + v2.x, v1.y + v2.y, v1.x + v2.z, v1.w + v2.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator-(Vec<4, T> v, T value) noexcept
+{
+	return {v.x - value, v.y - value, v.z - value, v.w - value};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator-(Vec<4, T> v1, Vec<1, T> v2) noexcept
+{
+	return {v1.x - v2.x, v1.y - v2.x, v1.z - v2.x, v1.w - v2.x};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator-(T value, Vec<4, T> v) noexcept
+{
+	return {value - v.x, value - v.y, value - v.z, value - v.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator-(Vec<1, T> v1, Vec<4, T> v2) noexcept
+{
+	return {v1.x - v2.x, v1.x - v2.y, v1.x - v2.z, v1.x - v2.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator-(Vec<4, T> v1, Vec<4, T> v2) noexcept
+{
+	return {v1.x - v2.x, v1.y - v2.y, v1.z - v2.z, v1.w - v2.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator*(Vec<4, T> v, T value) noexcept
+{
+	return {v.x * value, v.y * value, v.z * value, v.w * value};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator*(Vec<4, T> v1, Vec<1, T> v2) noexcept
+{
+	return {v1.x * v2.x, v1.y * v2.x, v1.z * v2.x, v1.w * v2.x};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator*(T value, Vec<4, T> v) noexcept
+{
+	return {value * v.x, value * v.y, value * v.z, value * v.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator*(Vec<1, T> v1, Vec<4, T> v2) noexcept
+{
+	return {v1.x * v2.x, v1.x * v2.y, v1.x * v2.z, v1.x * v2.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator*(Vec<4, T> v1, Vec<4, T> v2) noexcept
+{
+	return {v1.x * v2.x, v1.y * v2.y, v1.z * v2.z, v1.w * v2.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator/(Vec<4, T> v, T value) noexcept
+{
+	return {v.x / value, v.y / value, v.z / value, v.w / value};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator/(Vec<4, T> v1, Vec<1, T> v2) noexcept
+{
+	return {v1.x / v2.x, v1.y / v2.x, v1.z / v2.x, v1.w / v2.x};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator/(T value, Vec<4, T> v) noexcept
+{
+	return {value / v.x, value / v.y, value / v.z, value / v.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator/(Vec<1, T> v1, Vec<4, T> v2) noexcept
+{
+	return {v1.x / v2.x, v1.x / v2.y, v1.x / v2.z, v1.x / v2.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator/(Vec<4, T> v1, Vec<4, T> v2) noexcept
+{
+	return {v1.x / v2.x, v1.y / v2.y, v1.z / v2.z, v1.w / v2.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator%(Vec<4, T> v, T value) noexcept
+{
+	return {v.x % value, v.y % value, v.z % value, v.w % value};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator%(Vec<4, T> v1, Vec<1, T> v2) noexcept
+{
+	return {v1.x % v2.x, v1.y % v2.x, v1.z % v2.x, v1.w % v2.x};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator%(T value, Vec<4, T> v) noexcept
+{
+	return {value % v.x, value % v.y, value % v.z, value % v.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator%(Vec<1, T> v1, Vec<4, T> v2) noexcept
+{
+	return {v1.x % v2.x, v1.x % v2.y, v1.x % v2.z, v1.x % v2.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator%(Vec<4, T> v1, Vec<4, T> v2) noexcept
+{
+	return {v1.x % v2.x, v1.y % v2.y, v1.z % v2.z, v1.w % v2.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator&(Vec<4, T> v, T value) noexcept
+{
+	return {v.x & value, v.y & value, v.z & value, v.w & value};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator&(Vec<4, T> v1, Vec<1, T> v2) noexcept
+{
+	return {v1.x & v2.x, v1.y & v2.x, v1.z & v2.x, v1.w & v2.x};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator&(T value, Vec<4, T> v) noexcept
+{
+	return {value & v.x, value & v.y, value & v.z, value & v.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator&(Vec<1, T> v1, Vec<4, T> v2) noexcept
+{
+	return {v1.x & v2.x, v1.x & v2.y, v1.x & v2.z, v1.x & v2.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator&(Vec<4, T> v1, Vec<4, T> v2) noexcept
+{
+	return {v1.x & v2.x, v1.y & v2.y, v1.z & v2.z, v1.w & v2.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator|(Vec<4, T> v, T value) noexcept
+{
+	return {v.x | value, v.y | value, v.z | value, v.w | value};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator|(Vec<4, T> v1, Vec<1, T> v2) noexcept
+{
+	return {v1.x | v2.x, v1.y | v2.x, v1.z | v2.x, v1.w | v2.x};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator|(T value, Vec<4, T> v) noexcept
+{
+	return {value | v.x, value | v.y, value | v.z, value | v.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator|(Vec<1, T> v1, Vec<4, T> v2) noexcept
+{
+	return {v1.x | v2.x, v1.x | v2.y, v1.x | v2.z, v1.x | v2.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator|(Vec<4, T> v1, Vec<4, T> v2) noexcept
+{
+	return {v1.x | v2.x, v1.y | v2.y, v1.z | v2.z, v1.w | v2.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator^(Vec<4, T> v, T value) noexcept
+{
+	return {v.x ^ value, v.y ^ value, v.z ^ value, v.w ^ value};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator^(Vec<4, T> v1, Vec<1, T> v2) noexcept
+{
+	return {v1.x ^ v2.x, v1.y ^ v2.x, v1.z ^ v2.x, v1.w ^ v2.x};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator^(T value, Vec<4, T> v) noexcept
+{
+	return {value ^ v.x, value ^ v.y, value ^ v.z, value ^ v.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator^(Vec<1, T> v1, Vec<4, T> v2) noexcept
+{
+	return {v1.x ^ v2.x, v1.x ^ v2.y, v1.x ^ v2.z, v1.x ^ v2.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator^(Vec<4, T> v1, Vec<4, T> v2) noexcept
+{
+	return {v1.x ^ v2.x, v1.y ^ v2.y, v1.z ^ v2.z, v1.w ^ v2.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator<<(Vec<4, T> v, T value) noexcept
+{
+	return {v.x << value, v.y << value, v.z << value, v.w << value};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator<<(Vec<4, T> v1, Vec<1, T> v2) noexcept
+{
+	return {v1.x << v2.x, v1.y << v2.x, v1.z << v2.x, v1.w << v2.x};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator<<(T value, Vec<4, T> v) noexcept
+{
+	return {value << v.x, value << v.y, value << v.z, value << v.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator<<(Vec<1, T> v1, Vec<4, T> v2) noexcept
+{
+	return {v1.x << v2.x, v1.x << v2.y, v1.x << v2.z, v1.x << v2.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator<<(Vec<4, T> v1, Vec<4, T> v2) noexcept
+{
+	return {v1.x << v2.x, v1.y << v2.y, v1.z << v2.z, v1.w << v2.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator>>(Vec<4, T> v, T value) noexcept
+{
+	return {v.x >> value, v.y >> value, v.z >> value, v.w >> value};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator>>(Vec<4, T> v1, Vec<1, T> v2) noexcept
+{
+	return {v1.x >> v2.x, v1.y >> v2.x, v1.z >> v2.x, v1.w >> v2.x};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator>>(T value, Vec<4, T> v) noexcept
+{
+	return {value >> v.x, value >> v.y, value >> v.z, value >> v.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator>>(Vec<1, T> v1, Vec<4, T> v2) noexcept
+{
+	return {v1.x >> v2.x, v1.x >> v2.y, v1.x >> v2.z, v1.x >> v2.w};
+}
+
+template <class T>
+[[nodiscard]] constexpr Vec<4, T> operator>>(Vec<4, T> v1, Vec<4, T> v2) noexcept
+{
+	return {v1.x >> v2.x, v1.y >> v2.y, v1.z >> v2.z, v1.w >> v2.w};
+}
+
+[[nodiscard]] constexpr Vec<4, bool> operator&&(Vec<4, bool> v1, Vec<4, bool> v2)
+{
+	return {v1.x && v2.x, v1.y && v2.y, v1.z && v2.z, v1.w && v2.w};
+}
+
+[[nodiscard]] constexpr Vec<4, bool> operator||(Vec<4, bool> v1, Vec<4, bool> v2)
+{
+	return {v1.x || v2.x, v1.y || v2.y, v1.z || v2.z, v1.w || v2.w};
+}
+
+/**************************************************************************************
+|                                                                                     |
+|                                       Compare                                       |
+|                                                                                     |
+**************************************************************************************/
+
+template <class T>
+[[nodiscard]] constexpr bool operator==(Vec<4, T> lhs, Vec<4, T> rhs) noexcept
+{
+	return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z && lhs.w == rhs.w;
+}
+
+template <class T>
+[[nodiscard]] constexpr bool operator!=(Vec<4, T> lhs, Vec<4, T> rhs) noexcept
+{
+	return !(lhs == rhs);
+}
 }  // namespace ufo
 
 #endif  // UFO_MATH_VEC4_HPP
