@@ -113,7 +113,7 @@ template <std::size_t Dim, class T>
 }
 
 template <std::size_t Dim, class T>
-[[nodiscard]] constexpr T squaredNorm(Vec<Dim, T> v)
+[[nodiscard]] constexpr T normSquared(Vec<Dim, T> v)
 {
 	for (std::size_t i{}; Dim > i; ++i) {
 		v[i] *= v[i];
@@ -128,7 +128,7 @@ template <std::size_t Dim, class T>
 template <std::size_t Dim, class T>
 [[nodiscard]] constexpr T norm(Vec<Dim, T> v)
 {
-	return std::sqrt(squaredNorm(v));
+	return std::sqrt(normSquared(v));
 }
 
 template <std::size_t Dim, class T>
@@ -182,7 +182,7 @@ template <std::size_t Dim, class T>
 {
 	if constexpr (1 == Dim) {
 		return v.x;
-	} else if constexpr (4 <= Dim) {
+	} else if constexpr (4 >= Dim) {
 		if constexpr (3 == Dim) {
 			v.x = v.x < v.z ? v.x : v.z;
 		} else if constexpr (4 == Dim) {
@@ -200,7 +200,7 @@ template <std::size_t Dim, class T>
 {
 	if constexpr (1 == Dim) {
 		return v.x;
-	} else if constexpr (4 <= Dim) {
+	} else if constexpr (4 >= Dim) {
 		if constexpr (3 == Dim) {
 			v.x = v.x > v.z ? v.x : v.z;
 		} else if constexpr (4 == Dim) {
@@ -278,7 +278,7 @@ template <std::size_t Dim, class T>
 }
 
 template <std::size_t Dim, class T>
-[[nodiscard]] constexpr Vec<Dim, T> ceil(Vec<Dim, T> v, Vec<Dim, T> lo, Vec<Dim, T> hi)
+[[nodiscard]] constexpr Vec<Dim, T> ceil(Vec<Dim, T> v)
 {
 	for (std::size_t i{}; Dim > i; ++i) {
 		v[i] = std::ceil(v[i]);
@@ -287,7 +287,7 @@ template <std::size_t Dim, class T>
 }
 
 template <std::size_t Dim, class T>
-[[nodiscard]] constexpr Vec<Dim, T> floor(Vec<Dim, T> v, Vec<Dim, T> lo, Vec<Dim, T> hi)
+[[nodiscard]] constexpr Vec<Dim, T> floor(Vec<Dim, T> v)
 {
 	for (std::size_t i{}; Dim > i; ++i) {
 		v[i] = std::floor(v[i]);
@@ -296,7 +296,7 @@ template <std::size_t Dim, class T>
 }
 
 template <std::size_t Dim, class T>
-[[nodiscard]] constexpr Vec<Dim, T> trunc(Vec<Dim, T> v, Vec<Dim, T> lo, Vec<Dim, T> hi)
+[[nodiscard]] constexpr Vec<Dim, T> trunc(Vec<Dim, T> v)
 {
 	for (std::size_t i{}; Dim > i; ++i) {
 		v[i] = std::trunc(v[i]);
@@ -305,7 +305,7 @@ template <std::size_t Dim, class T>
 }
 
 template <std::size_t Dim, class T>
-[[nodiscard]] constexpr Vec<Dim, T> round(Vec<Dim, T> v, Vec<Dim, T> lo, Vec<Dim, T> hi)
+[[nodiscard]] constexpr Vec<Dim, T> round(Vec<Dim, T> v)
 {
 	for (std::size_t i{}; Dim > i; ++i) {
 		v[i] = std::round(v[i]);
