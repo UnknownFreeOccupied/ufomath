@@ -178,6 +178,16 @@ template <class T>
 }
 
 template <std::size_t Dim, class T>
+[[nodiscard]] constexpr Vec<Dim, T> min(Vec<Dim, T> v1, Vec<Dim, T> v2)
+{
+	Vec<Dim, T> res;
+	for (std::size_t i{}; Dim > i; ++i) {
+		res[i] = std::min(v1[i], v2[i]);
+	}
+	return res;
+}
+
+template <std::size_t Dim, class T>
 [[nodiscard]] constexpr T min(Vec<Dim, T> v)
 {
 	if constexpr (1 == Dim) {
@@ -193,6 +203,16 @@ template <std::size_t Dim, class T>
 	} else {
 		// Error
 	}
+}
+
+template <std::size_t Dim, class T>
+[[nodiscard]] constexpr Vec<Dim, T> max(Vec<Dim, T> v1, Vec<Dim, T> v2)
+{
+	Vec<Dim, T> res;
+	for (std::size_t i{}; Dim > i; ++i) {
+		res[i] = std::max(v1[i], v2[i]);
+	}
+	return res;
 }
 
 template <std::size_t Dim, class T>
@@ -311,6 +331,51 @@ template <std::size_t Dim, class T>
 		v[i] = std::round(v[i]);
 	}
 	return v;
+}
+
+template <std::size_t Dim>
+[[nodiscard]] constexpr bool all(Vec<Dim, bool> v)
+{
+	for (std::size_t i{}; Dim > i; ++i) {
+		if (!v[i]) {
+			return false;
+		}
+	}
+	return true;
+}
+
+template <std::size_t Dim>
+[[nodiscard]] constexpr bool any(Vec<Dim, bool> v)
+{
+	for (std::size_t i{}; Dim > i; ++i) {
+		if (v[i]) {
+			return true;
+		}
+	}
+	return false;
+}
+
+template <std::size_t Dim>
+[[nodiscard]] constexpr bool some(Vec<Dim, bool> v)
+{
+	bool t = false;
+	bool f = false;
+	for (std::size_t i{}; Dim > i; ++i) {
+		t = t || v[i];
+		f = f || !v[i];
+	}
+	return t && f;
+}
+
+template <std::size_t Dim>
+[[nodiscard]] constexpr bool none(Vec<Dim, bool> v)
+{
+	for (std::size_t i{}; Dim > i; ++i) {
+		if (v[i]) {
+			return false;
+		}
+	}
+	return true;
 }
 }  // namespace ufo
 

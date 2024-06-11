@@ -53,6 +53,9 @@ namespace ufo
 template <std::size_t Dim, class T = float>
 struct Vec;
 
+// template <class T, class... U>
+// Vec(T, U...) -> Vec<1 + sizeof...(U), T>;
+
 template <class T = float>
 using Vec1 = Vec<1, T>;
 template <class T = float>
