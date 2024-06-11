@@ -249,7 +249,7 @@ struct Mat<2, 2, T> {
 	void swap(Mat& other) noexcept { value_.swap(other.value_); }
 
  private:
-	std::array<column_type, 2> value_
+	std::array<column_type, 2> value_;
 };
 
 /**************************************************************************************
