@@ -114,6 +114,12 @@ template <std::size_t Dim, class T>
 	return end(v);
 }
 
+template <class T, std::size_t Dim, class U>
+[[nodiscard]] constexpr Vec<Dim, T> cast(Vec<Dim, U> const &v)
+{
+	return Vec<Dim, T>(v);
+}
+
 template <std::size_t Dim, class T>
 [[nodiscard]] constexpr T normSquared(Vec<Dim, T> v)
 {
