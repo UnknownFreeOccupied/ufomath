@@ -62,9 +62,11 @@ std::ostream &operator<<(std::ostream &out, Vec<Dim, T> v)
 	out << "x: " << v.x;
 	if constexpr (1 < Dim) {
 		out << " y: " << v.y;
-	} else if constexpr (2 < Dim) {
+	}
+	if constexpr (2 < Dim) {
 		out << " z: " << v.z;
-	} else if constexpr (3 < Dim) {
+	}
+	if constexpr (3 < Dim) {
 		out << " w: " << v.w;
 	}
 	return out;
