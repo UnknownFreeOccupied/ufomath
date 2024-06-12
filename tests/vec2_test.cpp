@@ -10,14 +10,14 @@ TEST_CASE("[Vec2f] [operator==] Equality operator")
 {
 	ufo::Vec2f vec1(1.5f, 2.0f);
 	ufo::Vec2f vec2(1.5f, 2.0f);
-	REQUIRE(vec1 == vec2);
+	REQUIRE(equal(ufo::Vec2b(true), vec1 == vec2));
 }
 
 TEST_CASE("[Vec2f] [operator!=] Inequality operator")
 {
 	ufo::Vec2f vec1(1.5f, 3.0f);
 	ufo::Vec2f vec2(1.5f, 2.0f);
-	REQUIRE(vec1 != vec2);
+	REQUIRE(equal(ufo::Vec2b(false, true), vec1 != vec2));
 }
 
 TEST_CASE("[Vec2f] [operator+] Addition operator")

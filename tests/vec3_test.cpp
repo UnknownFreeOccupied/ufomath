@@ -11,14 +11,14 @@ TEST_CASE("[Vec3f] [operator==] Equality operator")
 {
 	ufo::Vec3f vec1(1.5f, 2.0f, 3.5f);
 	ufo::Vec3f vec2(1.5f, 2.0f, 3.5f);
-	REQUIRE(vec1 == vec2);
+	REQUIRE(equal(ufo::Vec3b(true), vec1 == vec2));
 }
 
 TEST_CASE("[Vec3f] [operator!=] Inequality operator")
 {
 	ufo::Vec3f vec1(1.5f, 3.0f, 4.0f);
 	ufo::Vec3f vec2(1.5f, 2.0f, 4.0f);
-	REQUIRE(vec1 != vec2);
+	REQUIRE(equal(ufo::Vec3b(false, true, false), vec1 != vec2));
 }
 
 TEST_CASE("[Vec3f] [operator+] Addition operator")
@@ -433,7 +433,7 @@ TEST_CASE("Vec3f cross product")
 		ufo::Vec3f b(0.0, 1.0, 0.0);
 		ufo::Vec3f result = cross(a, b);
 		ufo::Vec3f expected(0.0, 0.0, 1.0);
-		REQUIRE(result == expected);
+		REQUIRE(equal(result, expected));
 	}
 
 	// Test case 2: Cross product of parallel vectors (should result in zero vector)
@@ -443,7 +443,7 @@ TEST_CASE("Vec3f cross product")
 		ufo::Vec3f b(4.0, 6.0, 8.0);
 		ufo::Vec3f result = cross(a, b);
 		ufo::Vec3f expected(0.0, 0.0, 0.0);
-		REQUIRE(result == expected);
+		REQUIRE(equal(result, expected));
 	}
 
 	// Test case 3: Cross product of vectors with negative components
@@ -453,7 +453,7 @@ TEST_CASE("Vec3f cross product")
 		ufo::Vec3f b(4.0, -5.0, 6.0);
 		ufo::Vec3f result = cross(a, b);
 		ufo::Vec3f expected(-3, -6, -3);
-		REQUIRE(result == expected);
+		REQUIRE(equal(result, expected));
 	}
 }
 

@@ -333,6 +333,17 @@ template <std::size_t Dim, class T>
 	return v;
 }
 
+template <std::size_t Dim, class T>
+[[nodiscard]] constexpr bool equal(Vec<Dim, T> v1, Vec<Dim, T> v2)
+{
+	for (std::size_t i{}; Dim > i; ++i) {
+		if (v1[i] != v2[i]) {
+			return false;
+		}
+	}
+	return true;
+}
+
 template <std::size_t Dim>
 [[nodiscard]] constexpr bool all(Vec<Dim, bool> v)
 {
