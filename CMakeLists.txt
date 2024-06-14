@@ -6,6 +6,10 @@ project(ufomath
 	LANGUAGES CXX
 )
 
+option(UFO_TESTING  "Unit testing build" OFF)
+option(UFO_COVERAGE "Test coverage" OFF)
+option(UFO_DOCS     "Documentation build" OFF)
+
 add_subdirectory(1stparty)
 
 add_library(ufomath INTERFACE)
@@ -32,9 +36,12 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/
 	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
-# Only enable tests when we're the root project
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+if(UFO_TESTING)
   add_subdirectory(tests)
+endif()
+
+if(UFO_DOCS)
+	add_subdirectory(docs)
 endif()
 
 install(TARGETS ufomath
