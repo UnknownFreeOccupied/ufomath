@@ -21,6 +21,22 @@ add_executable(ufomath_tests
 
 target_link_libraries(ufomath_tests PRIVATE UFO::Math Catch2::Catch2WithMain)
 
+target_compile_options(ufomath_tests
+	PUBLIC
+		-Wall
+		-Werror
+		-Wextra
+		-pedantic
+		-Wconversion
+		-Wcast-align
+		-Wunused
+		# -Wshadow
+		-Wold-style-cast
+		-Wpointer-arith
+		-Wcast-qual
+		-Wno-missing-braces
+)
+
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 include(CTest)
 include(Catch)

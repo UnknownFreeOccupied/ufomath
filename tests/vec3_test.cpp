@@ -1,11 +1,12 @@
 // UFO
-#include <cmath>
-#include <iostream>
 #include <ufo/math/vec3.hpp>
 
 // Catch2
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
+
+// STL
+#include <cmath>
 
 TEST_CASE("[Vec3f] [operator==] Equality operator")
 {
@@ -422,6 +423,9 @@ TEST_CASE("Vec3f")
 	ufo::Vec3f v3(2.3f, 3, 6.1f);
 	ufo::Vec3f cross_test = cross(v1, v3);
 	ufo::Vec3f cross_expected(3.2f, 0.8f, -1.6f);
+	for (std::size_t i{}; 3 > i; ++i) {
+		REQUIRE(cross_test[i] == Catch::Approx(cross_expected[i]));
+	}
 }
 
 TEST_CASE("Vec3f cross product")
@@ -463,6 +467,9 @@ TEST_CASE("[Vec3f] [normalize]")
 	{
 		ufo::Vec3f v(0.0f, 0.0f, 0.0f);
 		auto       v1 = normalize(v);
+		REQUIRE(!std::isfinite(v1[0]));
+		REQUIRE(!std::isfinite(v1[1]));
+		REQUIRE(!std::isfinite(v1[2]));
 		// TODO what should happen when normalizing zero vector
 	}
 

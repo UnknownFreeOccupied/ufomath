@@ -374,6 +374,8 @@ TEST_CASE("[Vec2f] [normalize]")
 	{
 		ufo::Vec2f v(0.0f, 0.0f);
 		auto       v1 = normalize(v);
+		REQUIRE(!std::isfinite(v1[0]));
+		REQUIRE(!std::isfinite(v1[1]));
 		// TODO what should happen when normalizing zero vector
 	}
 
