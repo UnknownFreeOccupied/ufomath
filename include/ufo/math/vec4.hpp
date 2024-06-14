@@ -3,16 +3,15 @@
  * Unknown
  *
  * @author Daniel Duberg (dduberg@kth.se)
- * @see https://github.com/UnknownFreeOccupied/ufomap
- * @version 1.0
- * @date 2022-05-13
+ * @see https://github.com/UnknownFreeOccupied/ufomath
+ * @version 2.0
+ * @date 2024-06-14
  *
- * @copyright Copyright (c) 2022, Daniel Duberg, KTH Royal Institute of
- * Technology
+ * @copyright Copyright (c) 2024, Daniel Duberg
  *
  * BSD 3-Clause License
  *
- * Copyright (c) 2022, Daniel Duberg, KTH Royal Institute of Technology
+ * Copyright (c) 2024, Daniel Duberg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
