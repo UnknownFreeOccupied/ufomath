@@ -393,6 +393,17 @@ template <std::size_t Dim>
 	}
 	return true;
 }
+
+template <std::size_t Dim, class T>
+[[nodiscard]] constexpr bool isfinite(Vec<Dim, T> v)
+{
+	for (std::size_t i{}; Dim > i; ++i) {
+		if (!std::isfinite(v[i])) {
+			return false;
+		}
+	}
+	return true;
+}
 }  // namespace ufo
 
 #endif  // UFO_MATH_DETAIL_VEC_FUN_HPP
