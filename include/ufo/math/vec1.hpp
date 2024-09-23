@@ -309,181 +309,181 @@ struct Vec<1, T> {
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator+(Vec<1, T> v, T value) noexcept
 {
-	return {v.x + value};
+	return Vec<1, T>{v.x + value};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator+(T value, Vec<1, T> v) noexcept
 {
-	return {value + v.x};
+	return Vec<1, T>{value + v.x};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator+(Vec<1, T> v1, Vec<1, T> v2) noexcept
 {
-	return {v1.x + v2.x};
+	return Vec<1, T>{v1.x + v2.x};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator-(Vec<1, T> v, T value) noexcept
 {
-	return {v.x - value};
+	return Vec<1, T>{v.x - value};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator-(T value, Vec<1, T> v) noexcept
 {
-	return {value - v.x};
+	return Vec<1, T>{value - v.x};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator-(Vec<1, T> v1, Vec<1, T> v2) noexcept
 {
-	return {v1.x - v2.x};
+	return Vec<1, T>{v1.x - v2.x};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator*(Vec<1, T> v, T value) noexcept
 {
-	return {v.x * value};
+	return Vec<1, T>{v.x * value};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator*(T value, Vec<1, T> v) noexcept
 {
-	return {value * v.x};
+	return Vec<1, T>{value * v.x};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator*(Vec<1, T> v1, Vec<1, T> v2) noexcept
 {
-	return {v1.x * v2.x};
+	return Vec<1, T>{v1.x * v2.x};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator/(Vec<1, T> v, T value) noexcept
 {
-	return {v.x / value};
+	return Vec<1, T>{v.x / value};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator/(T value, Vec<1, T> v) noexcept
 {
-	return {value / v.x};
+	return Vec<1, T>{value / v.x};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator/(Vec<1, T> v1, Vec<1, T> v2) noexcept
 {
-	return {v1.x / v2.x};
+	return Vec<1, T>{v1.x / v2.x};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator%(Vec<1, T> v, T value) noexcept
 {
-	return {v.x % value};
+	return Vec<1, T>{v.x % value};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator%(T value, Vec<1, T> v) noexcept
 {
-	return {value % v.x};
+	return Vec<1, T>{value % v.x};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator%(Vec<1, T> v1, Vec<1, T> v2) noexcept
 {
-	return {v1.x % v2.x};
+	return Vec<1, T>{v1.x % v2.x};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator&(Vec<1, T> v, T value) noexcept
 {
-	return {v.x & value};
+	return Vec<1, T>{v.x & value};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator&(T value, Vec<1, T> v) noexcept
 {
-	return {value & v.x};
+	return Vec<1, T>{value & v.x};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator&(Vec<1, T> v1, Vec<1, T> v2) noexcept
 {
-	return {v1.x & v2.x};
+	return Vec<1, T>{v1.x & v2.x};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator|(Vec<1, T> v, T value) noexcept
 {
-	return {v.x | value};
+	return Vec<1, T>{v.x | value};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator|(T value, Vec<1, T> v) noexcept
 {
-	return {value | v.x};
+	return Vec<1, T>{value | v.x};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator|(Vec<1, T> v1, Vec<1, T> v2) noexcept
 {
-	return {v1.x | v2.x};
+	return Vec<1, T>{v1.x | v2.x};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator^(Vec<1, T> v, T value) noexcept
 {
-	return {v.x ^ value};
+	return Vec<1, T>{v.x ^ value};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator^(T value, Vec<1, T> v) noexcept
 {
-	return {value ^ v.x};
+	return Vec<1, T>{value ^ v.x};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator^(Vec<1, T> v1, Vec<1, T> v2) noexcept
 {
-	return {v1.x ^ v2.x};
+	return Vec<1, T>{v1.x ^ v2.x};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator<<(Vec<1, T> v, T value) noexcept
 {
-	return {v.x << value};
+	return Vec<1, T>{v.x << value};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator<<(T value, Vec<1, T> v) noexcept
 {
-	return {value << v.x};
+	return Vec<1, T>{value << v.x};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator<<(Vec<1, T> v1, Vec<1, T> v2) noexcept
 {
-	return {v1.x << v2.x};
+	return Vec<1, T>{v1.x << v2.x};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator>>(Vec<1, T> v, T value) noexcept
 {
-	return {v.x >> value};
+	return Vec<1, T>{v.x >> value};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator>>(T value, Vec<1, T> v) noexcept
 {
-	return {value >> v.x};
+	return Vec<1, T>{value >> v.x};
 }
 
 template <class T>
 [[nodiscard]] constexpr Vec<1, T> operator>>(Vec<1, T> v1, Vec<1, T> v2) noexcept
 {
-	return {v1.x >> v2.x};
+	return Vec<1, T>{v1.x >> v2.x};
 }
 
 [[nodiscard]] constexpr Vec<1, bool> operator&&(Vec<1, bool> v1, Vec<1, bool> v2)
