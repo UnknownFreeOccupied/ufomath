@@ -154,11 +154,14 @@ RandomIt2 transform(ExecutionPolicy&& policy, Pose<Dim, T> const& tf, RandomIt1 
 	return std::transform(std::forward<ExecutionPolicy>(policy), first, last, d_first,
 	                      trans);
 #elif defined(UFO_OMP)
+	std::size_t size = std::distance(first, last);
+
 #pragma omp parallel for
-	for (; first != last; ++d_first, ++first) {
-		*d_first = trans(*first);
+	for (std::size_t i = 0; i != size; ++i) {
+		d_first[i] = trans(first[i]);
 	}
-	return d_first;
+
+	return std::next(d_first, size);
 #endif
 }
 
