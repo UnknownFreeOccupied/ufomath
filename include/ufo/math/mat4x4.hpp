@@ -58,8 +58,8 @@ template <class T>
 struct Mat<4, 4, T> {
 	using value_type  = T;
 	using size_type   = std::size_t;
-	using column_type = Vec3<T>;
-	using row_type    = Vec3<T>;
+	using column_type = Vec4<T>;
+	using row_type    = Vec4<T>;
 
 	/**************************************************************************************
 	|                                                                                     |
