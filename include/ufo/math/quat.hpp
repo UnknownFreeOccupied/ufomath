@@ -54,7 +54,7 @@
 
 namespace ufo
 {
-template <class T>
+template <class T = float>
 struct Quat {
 	using value_type = T;
 	using size_type  = std::size_t;
@@ -74,6 +74,34 @@ struct Quat {
 	constexpr Quat(Quat const &) noexcept = default;
 
 	constexpr Quat(T x, T y, T z, T w) noexcept : x(x), y(y), z(z), w(w) {}
+
+	// TODO: Is the one below correct?
+	constexpr Quat(T roll, T pitch, T yaw) noexcept
+	{
+		T sroll  = std::sin(roll);
+		T spitch = std::sin(pitch);
+		T syaw   = std::sin(yaw);
+		T croll  = std::cos(roll);
+		T cpitch = std::cos(pitch);
+		T cyaw   = std::cos(yaw);
+
+		T m[3][3] = {// create rotational Matrix
+		             {cyaw * cpitch, cyaw * spitch * sroll - syaw * croll,
+		              cyaw * spitch * croll + syaw * sroll},
+		             {syaw * cpitch, syaw * spitch * sroll + cyaw * croll,
+		              syaw * spitch * croll - cyaw * sroll},
+		             {-spitch, cpitch * sroll, cpitch * croll}};
+
+		T _w = std::sqrt(std::max(T(0), T(1) + m[0][0] + m[1][1] + m[2][2])) / T(2);
+		T _x = std::sqrt(std::max(T(0), T(1) + m[0][0] - m[1][1] - m[2][2])) / T(2);
+		T _y = std::sqrt(std::max(T(0), T(1) - m[0][0] + m[1][1] - m[2][2])) / T(2);
+		T _z = std::sqrt(std::max(T(0), T(1) - m[0][0] - m[1][1] + m[2][2])) / T(2);
+
+		w = _w;
+		x = (m[2][1] - m[1][2]) >= T(0) ? std::abs(_x) : -std::abs(_x);
+		y = (m[0][2] - m[2][0]) >= T(0) ? std::abs(_y) : -std::abs(_y);
+		z = (m[1][0] - m[0][1]) >= T(0) ? std::abs(_z) : -std::abs(_z);
+	}
 
 	constexpr Quat(Vec3<T> axis, T angle) noexcept
 	{
@@ -152,8 +180,6 @@ struct Quat {
 				w = T(1);
 				break;
 		}
-
-
 
 		// T trace = m[0][0] + m[1][1] + m[2][2];
 		// T temp[4];
@@ -349,6 +375,15 @@ struct Quat {
 			n += operator[](i) * operator[](i);
 		}
 		return std::sqrt(n);
+	}
+
+	constexpr auto normSquared() const noexcept
+	{
+		T n = 0;
+		for (unsigned int i = 0; i < 4; i++) {
+			n += operator[](i) * operator[](i);
+		}
+		return n;
 	}
 
 	constexpr Quat normalized() const noexcept
