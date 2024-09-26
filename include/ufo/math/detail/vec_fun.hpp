@@ -404,6 +404,18 @@ template <std::size_t Dim, class T>
 	}
 	return true;
 }
+
+template <std::size_t Dim, class T, class F>
+[[nodiscard]] constexpr Vec<Dim, T> lerp(Vec<Dim, T> a, Vec<Dim, T> b, F t)
+{
+	return a + (b - a) * t;
+}
+
+template <std::size_t Dim, class T, class F>
+[[nodiscard]] constexpr Vec<Dim, T> slerp(Vec<Dim, T> a, Vec<Dim, T> b, F t)
+{
+	// TODO: Implement
+}
 }  // namespace ufo
 
 #endif  // UFO_MATH_DETAIL_VEC_FUN_HPP
