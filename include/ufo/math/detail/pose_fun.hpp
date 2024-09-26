@@ -55,76 +55,152 @@
 #include <iterator>
 #include <ostream>
 #include <type_traits>
+#include <vector>
 
 namespace ufo
 {
 template <std::size_t Dim, class T>
-std::ostream& operator<<(std::ostream& out, Pose<Dim, T> p)
+std::ostream& operator<<(std::ostream& out, Pose<Dim, T> const& p)
 {
-	// TODO: Implement
-	return out;
+	return out << "Position: " << p.position << ", Orientation: " << p.orientation;
 }
 
 template <std::size_t Dim, class T, class U>
-[[nodiscard]] Vec<Dim, U> transform(Pose<Dim, T> const& p, Vec<Dim, U> v)
+[[nodiscard]] Vec<Dim, U> transform(Pose<Dim, T> const& tf, Vec<Dim, U> v)
 {
-	// TODO: Implement
+	Mat<Dim + 1, Dim + 1, T> t = static_cast<Mat<Dim + 1, Dim + 1, T>>(tf);
+	Vec<Dim + 1, U>          p(v, 1);
+	return static_cast<Vec<Dim, U>>(t * p);
 }
 
 template <std::size_t Dim, class T, class InputIt, class OutputIt>
-OutputIt transform(Pose<Dim, T> const& p, InputIt first, InputIt last, OutputIt d_first)
+OutputIt transform(Pose<Dim, T> const& tf, InputIt first, InputIt last, OutputIt d_first)
 {
-	// TODO: Correct?
-
-	std::transform(
-	    first, last, d_first,
-	    [m = static_cast<Mat<Dim + 1, Dim + 1, T>>(p)](auto const& e) { return m * e; });
+	return std::transform(first, last, d_first,
+	                      [t = static_cast<Mat<Dim + 1, Dim + 1, T>>(tf)](auto e) {
+		                      Vec v = e;
+		                      // std::cout << "Weee: " << v << std::endl;
+		                      using U = typename std::decay_t<decltype(v)>::value_type;
+		                      Vec<Dim + 1, U> p(v, 1);
+		                      // std::cout << "Peee: " << p << std::endl;
+		                      // std::cout << "Teee:\n" << t << std::endl;
+		                      static_cast<decltype(v)&>(e) = static_cast<Vec<Dim, U>>(t * p);
+		                      // std::cout << "Eeee:\n" << e << std::endl;
+		                      return e;
+	                      });
 }
 
 template <std::size_t Dim, class T, class InputIt>
-void transform(Pose<Dim, T> const& p, InputIt first, InputIt last)
+auto transform(Pose<Dim, T> const& tf, InputIt first, InputIt last)
 {
-	transform(p, first, last, first);
+	using V = typename std::iterator_traits<InputIt>::value_type;
+	std::vector<V> v;
+	v.reserve(std::distance(first, last));
+	transform(tf, first, last, std::back_inserter(v));
+	return v;
 }
 
 template <std::size_t Dim, class T, class Range>
-void transform(Pose<Dim, T> const& p, Range& range)
+auto transform(Pose<Dim, T> const& tf, Range const& range)
 {
 	using std::begin;
 	using std::end;
-	transform(p, begin(range), end(range));
+	return transform(tf, begin(range), end(range));
+}
+
+template <std::size_t Dim, class T, class InputOutputIt>
+InputOutputIt transformInPlace(Pose<Dim, T> const& tf, InputOutputIt first,
+                               InputOutputIt last)
+{
+	return transform(tf, first, last, first);
+}
+
+template <std::size_t Dim, class T, class Range>
+void transformInPlace(Pose<Dim, T> const& tf, Range& range)
+{
+	using std::begin;
+	using std::end;
+	transformInPlace(tf, begin(range), end(range));
 }
 
 template <
-    class ExecutionPolicy, std::size_t Dim, class T, class ForwardIt1, class ForwardIt2,
+    class ExecutionPolicy, std::size_t Dim, class T, class RandomIt1, class RandomIt2,
     std::enable_if_t<is_execution_policy_v<std::decay_t<ExecutionPolicy>>, bool> = true>
-ForwardIt2 transform(ExecutionPolicy&& policy, Pose<Dim, T> const& p, ForwardIt1 first,
-                     ForwardIt1 last, ForwardIt2 d_first)
+RandomIt2 transform(ExecutionPolicy&& policy, Pose<Dim, T> const& tf, RandomIt1 first,
+                    RandomIt1 last, RandomIt2 d_first)
 {
-	// TODO: Correct?
+	if constexpr (std::is_same_v<execution::sequenced_policy,
+	                             std::decay_t<ExecutionPolicy>>) {
+		return transform(tf, first, last, d_first);
+	}
 
-	std::transform(
-	    first, last, d_first,
-	    [m = static_cast<Mat<Dim + 1, Dim + 1, T>>(p)](auto const& e) { return m * e; });
+#if !defined(UFO_TBB) && !defined(UFO_OMP)
+	return transform(tf, first, last, d_first);
+#endif
+
+	auto trans = [t = static_cast<Mat<Dim + 1, Dim + 1, T>>(tf)](auto e) {
+		Vec v = e;
+		// std::cout << "Weee: " << v << std::endl;
+		using U = typename std::decay_t<decltype(v)>::value_type;
+		Vec<Dim + 1, U> p(v, 1);
+		// std::cout << "Peee: " << p << std::endl;
+		// std::cout << "Teee:\n" << t << std::endl;
+		static_cast<decltype(v)&>(e) = static_cast<Vec<Dim, U>>(t * p);
+		// std::cout << "Eeee:\n" << e << std::endl;
+		return e;
+	};
+
+#if defined(UFO_TBB)
+	return std::transform(std::forward<ExecutionPolicy>(policy), first, last, d_first,
+	                      trans);
+#elif defined(UFO_OMP)
+#pragma omp parallel for
+	for (; first != last; ++d_first, ++first) {
+		*d_first = trans(*first);
+	}
+	return d_first;
+#endif
 }
 
 template <
-    class ExecutionPolicy, std::size_t Dim, class T, class ForwardIt,
+    class ExecutionPolicy, std::size_t Dim, class T, class RandomIt,
     std::enable_if_t<is_execution_policy_v<std::decay_t<ExecutionPolicy>>, bool> = true>
-void transform(ExecutionPolicy&& policy, Pose<Dim, T> const& p, ForwardIt first,
-               ForwardIt last)
+auto transform(ExecutionPolicy&& policy, Pose<Dim, T> const& tf, RandomIt first,
+               RandomIt last)
 {
-	transform(std::forward<ExecutionPolicy>(policy), p, first, last, first);
+	using V = typename std::iterator_traits<RandomIt>::value_type;
+	std::vector<V> v(std::distance(first, last));
+	transform(std::forward<ExecutionPolicy>(policy), tf, first, last, v.begin());
+	return v;
 }
 
 template <
     class ExecutionPolicy, std::size_t Dim, class T, class Range,
     std::enable_if_t<is_execution_policy_v<std::decay_t<ExecutionPolicy>>, bool> = true>
-void transform(ExecutionPolicy&& policy, Pose<Dim, T> const& p, Range& range)
+auto transform(ExecutionPolicy&& policy, Pose<Dim, T> const& tf, Range& range)
 {
 	using std::begin;
 	using std::end;
-	transform(std::forward<ExecutionPolicy>(policy), p, begin(range), end(range));
+	return transform(std::forward<ExecutionPolicy>(policy), tf, begin(range), end(range));
+}
+
+template <
+    class ExecutionPolicy, std::size_t Dim, class T, class RandomInOutIt,
+    std::enable_if_t<is_execution_policy_v<std::decay_t<ExecutionPolicy>>, bool> = true>
+RandomInOutIt transformInPlace(ExecutionPolicy&& policy, Pose<Dim, T> const& tf,
+                               RandomInOutIt first, RandomInOutIt last)
+{
+	return transform(std::forward<ExecutionPolicy>(policy), tf, first, last, first);
+}
+
+template <
+    class ExecutionPolicy, std::size_t Dim, class T, class Range,
+    std::enable_if_t<is_execution_policy_v<std::decay_t<ExecutionPolicy>>, bool> = true>
+void transformInPlace(ExecutionPolicy&& policy, Pose<Dim, T> const& tf, Range& range)
+{
+	using std::begin;
+	using std::end;
+	transformInPlace(std::forward<ExecutionPolicy>(policy), tf, begin(range), end(range));
 }
 
 template <std::size_t Dim, class T>
