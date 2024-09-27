@@ -123,11 +123,10 @@ template <std::size_t Dim, class T>
 	for (std::size_t i{}; Dim > i; ++i) {
 		v[i] *= v[i];
 	}
-	T r = v[0];
 	for (std::size_t i = 1; Dim > i; ++i) {
-		r += v[i];
+		v[0] += v[i];
 	}
-	return r;
+	return v[0];
 }
 
 template <std::size_t Dim, class T>
