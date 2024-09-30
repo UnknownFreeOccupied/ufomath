@@ -167,11 +167,10 @@ template <std::size_t Dim, class T>
 	for (std::size_t i{}; Dim > i; ++i) {
 		a[i] *= b[i];
 	}
-	T r = a[0];
 	for (std::size_t i = 1; Dim > i; ++i) {
-		r += a[i];
+		a[0] += a[i];
 	}
-	return r;
+	return a[0];
 }
 
 template <class T>
@@ -414,6 +413,24 @@ template <std::size_t Dim, class T, class F>
 [[nodiscard]] constexpr Vec<Dim, T> slerp(Vec<Dim, T> a, Vec<Dim, T> b, F t)
 {
 	// TODO: Implement
+}
+
+template <std::size_t Dim, class T, class U>
+[[nodiscard]] constexpr Vec<Dim, T> mix(Vec<Dim, T> const &x, Vec<Dim, T> const &y,
+                                        Vec<Dim, U> const &a)
+{
+	return Vec<Dim, T>(Vec<Dim, U>(x) * (static_cast<U>(1) - a) + Vec<Dim, U>(y) * a);
+}
+
+template <std::size_t Dim, class T>
+[[nodiscard]] constexpr Vec<Dim, T> mix(Vec<Dim, T> const &x, Vec<Dim, T> const &y,
+                                        Vec<Dim, bool> const &a)
+{
+	Vec<Dim, T> res(0);
+	for (std::size_t i{}; Dim > i; ++i) {
+		res[i] = a[i] ? y[i] : x[i];
+	}
+	return res;
 }
 }  // namespace ufo
 
