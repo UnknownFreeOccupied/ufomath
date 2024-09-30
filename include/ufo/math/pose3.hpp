@@ -131,62 +131,13 @@ struct Pose<3, T> {
 	|                                                                                     |
 	**************************************************************************************/
 
-	constexpr explicit operator Mat3x3<T>() const
-	{
-		T d = normSquared(orientation);
-
-		assert(d != T(0));
-
-		T s = T(2) / d;
-
-		T xs = orientation.x * s;
-		T ys = orientation.y() * s;
-		T zs = orientation.z() * s;
-		T wx = orientation.w * xs;
-		T wy = orientation.w() * ys;
-		T wz = orientation.w() * zs;
-		T xx = orientation.x * xs;
-		T xy = orientation.x() * ys;
-		T xz = orientation.x() * zs;
-		T yy = orientation.y * ys;
-		T yz = orientation.y() * zs;
-		T zz = orientation.z() * zs;
-
-		// clang-format off
-		return {T(1) - (yy + zz), xy + wz,          xz - wy, 
-		        xy - wz,          T(1) - (xx + zz), yz + wx, 
-						xz + wy,          yz - wx,          T(1) - (xx + yy)};
-		// clang-format on
-	}
+	constexpr explicit operator Mat3x3<T>() const { return Mat3x3<T>(orientation); }
 
 	constexpr explicit operator Mat4x4<T>() const
 	{
-		// TODO: T d = normSquared(orientation);
-		T d = orientation.normSquared();
-
-		assert(d != T(0));
-
-		T s = T(2) / d;
-
-		T xs = orientation.x * s;
-		T ys = orientation.y * s;
-		T zs = orientation.z * s;
-		T wx = orientation.w * xs;
-		T wy = orientation.w * ys;
-		T wz = orientation.w * zs;
-		T xx = orientation.x * xs;
-		T xy = orientation.x * ys;
-		T xz = orientation.x * zs;
-		T yy = orientation.y * ys;
-		T yz = orientation.y * zs;
-		T zz = orientation.z * zs;
-
-		// clang-format off
-		return {T(1) - (yy + zz), xy + wz,          xz - wy,          T(0),
-		        xy - wz,          T(1) - (xx + zz), yz + wx,          T(0),
-						xz + wy,          yz - wx,          T(1) - (xx + yy), T(0),
-						position.x,       position.y,       position.z,       T(1)};
-		// clang-format on
+		Mat4x4<T> m(orientation);
+		m[3] = {position.x, position.y, position.z, T(1)};
+		return m;
 	}
 };
 }  // namespace ufo

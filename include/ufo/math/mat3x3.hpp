@@ -56,11 +56,16 @@ namespace ufo
 {
 template <class T>
 struct Mat<3, 3, T> {
+ public:
 	using value_type  = T;
 	using size_type   = std::size_t;
 	using column_type = Vec3<T>;
 	using row_type    = Vec3<T>;
 
+ private:
+	std::array<column_type, 3> value_;
+
+ public:
 	/**************************************************************************************
 	|                                                                                     |
 	|                                    Constructors                                     |
@@ -260,9 +265,6 @@ struct Mat<3, 3, T> {
 	**************************************************************************************/
 
 	void swap(Mat& other) noexcept { value_.swap(other.value_); }
-
- private:
-	std::array<column_type, 3> value_;
 };
 
 /**************************************************************************************

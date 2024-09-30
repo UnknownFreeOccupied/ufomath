@@ -43,6 +43,8 @@
 #define UFO_MATH_QUAT_HPP
 
 // UFO
+#include <ufo/math/detail/quat.hpp>
+#include <ufo/math/detail/quat_fun.hpp>
 #include <ufo/math/mat3x3.hpp>
 #include <ufo/math/mat4x4.hpp>
 #include <ufo/math/vec3.hpp>
@@ -54,15 +56,15 @@
 
 namespace ufo
 {
-template <class T = float>
+template <class T>
 struct Quat {
 	using value_type = T;
 	using size_type  = std::size_t;
 
+	T w{1};
 	T x{};
 	T y{};
 	T z{};
-	T w{1};
 
 	/**************************************************************************************
 	|                                                                                     |
@@ -73,143 +75,89 @@ struct Quat {
 	constexpr Quat() noexcept             = default;
 	constexpr Quat(Quat const &) noexcept = default;
 
-	constexpr Quat(T x, T y, T z, T w) noexcept : x(x), y(y), z(z), w(w) {}
-
-	// TODO: Is the one below correct?
-	constexpr Quat(T roll, T pitch, T yaw) noexcept
-	{
-		T sroll  = std::sin(roll);
-		T spitch = std::sin(pitch);
-		T syaw   = std::sin(yaw);
-		T croll  = std::cos(roll);
-		T cpitch = std::cos(pitch);
-		T cyaw   = std::cos(yaw);
-
-		T m[3][3] = {// create rotational Matrix
-		             {cyaw * cpitch, cyaw * spitch * sroll - syaw * croll,
-		              cyaw * spitch * croll + syaw * sroll},
-		             {syaw * cpitch, syaw * spitch * sroll + cyaw * croll,
-		              syaw * spitch * croll - cyaw * sroll},
-		             {-spitch, cpitch * sroll, cpitch * croll}};
-
-		T _w = std::sqrt(std::max(T(0), T(1) + m[0][0] + m[1][1] + m[2][2])) / T(2);
-		T _x = std::sqrt(std::max(T(0), T(1) + m[0][0] - m[1][1] - m[2][2])) / T(2);
-		T _y = std::sqrt(std::max(T(0), T(1) - m[0][0] + m[1][1] - m[2][2])) / T(2);
-		T _z = std::sqrt(std::max(T(0), T(1) - m[0][0] - m[1][1] + m[2][2])) / T(2);
-
-		w = _w;
-		x = (m[2][1] - m[1][2]) >= T(0) ? std::abs(_x) : -std::abs(_x);
-		y = (m[0][2] - m[2][0]) >= T(0) ? std::abs(_y) : -std::abs(_y);
-		z = (m[1][0] - m[0][1]) >= T(0) ? std::abs(_z) : -std::abs(_z);
-	}
-
-	constexpr Quat(Vec3<T> axis, T angle) noexcept
-	{
-		T s = std::sin(angle * T(0.5)) / norm(axis);
-		w   = std::cos(angle * T(0.5));
-		x   = axis.x * s;
-		y   = axis.y * s;
-		z   = axis.z * s;
-	}
-
 	template <class U>
-	constexpr Quat(Quat<U> q) noexcept
-	    : x(static_cast<T>(q.x))
+	constexpr Quat(Quat<U> const &q) noexcept
+	    : w(static_cast<T>(q.w))
+	    , x(static_cast<T>(q.x))
 	    , y(static_cast<T>(q.y))
 	    , z(static_cast<T>(q.z))
-	    , w(static_cast<T>(q.w))
 	{
+	}
+
+	constexpr Quat(T w, T x, T y, T z) noexcept : w(w), x(x), y(y), z(z) {}
+
+	constexpr Quat(T s, Vec3<T> const &v) noexcept : Quat(s, v.x, v.y, v.z) {}
+
+	Quat(Vec<3, T> const &u, Vec<3, T> const &v)
+	{
+		// Taken straight from GLM
+
+		T         norm_u_norm_v = std::sqrt(dot(u, u) * dot(v, v));
+		T         real_part     = norm_u_norm_v + dot(u, v);
+		Vec<3, T> t;
+
+		if (real_part < static_cast<T>(1.e-6f) * norm_u_norm_v) {
+			// If u and v are exactly opposite, rotate 180 degrees
+			// around an arbitrary orthogonal axis. Axis normalisation
+			// can happen later, when we normalise the quaternion.
+			real_part = static_cast<T>(0);
+			t         = std::abs(u.x) > std::abs(u.z) ? Vec<3, T>(-u.y, u.x, static_cast<T>(0))
+			                                          : Vec<3, T>(static_cast<T>(0), -u.z, u.y);
+		} else {
+			// Otherwise, build quaternion the standard way.
+			t = cross(u, v);
+		}
+
+		*this = normalize(Quat<T>(real_part, t.x, t.y, t.z));
+	}
+
+	// Build a quaternion from euler angles (pitch, yaw, roll (in whatever order you
+	// believe, try multiple times)), in radians.
+	// NOTE: This seems to be the same as setRPY from ROS 2
+	explicit Quat(Vec<3, T> const &euler_angles)
+	{
+		// Taken straight from GLM
+
+		Vec<3, T> c = cos(euler_angles * T(0.5));
+		Vec<3, T> s = sin(euler_angles * T(0.5));
+
+		w = c.x * c.y * c.z + s.x * s.y * s.z;
+		x = s.x * c.y * c.z - c.x * s.y * s.z;
+		y = c.x * s.y * c.z + s.x * c.y * s.z;
+		z = c.x * c.y * s.z - s.x * s.y * c.z;
 	}
 
 	constexpr Quat(Mat3x3<T> const &m) noexcept
 	{
-		T fourXSquaredMinus1 = m[0][0] - m[1][1] - m[2][2];
-		T fourYSquaredMinus1 = m[1][1] - m[0][0] - m[2][2];
-		T fourZSquaredMinus1 = m[2][2] - m[0][0] - m[1][1];
-		T fourWSquaredMinus1 = m[0][0] + m[1][1] + m[2][2];
+		// Taken from ROS 2 geometry2 but changed to wxyz, hopefully correct
 
-		int biggestIndex             = 0;
-		T   fourBiggestSquaredMinus1 = fourWSquaredMinus1;
-		if (fourXSquaredMinus1 > fourBiggestSquaredMinus1) {
-			fourBiggestSquaredMinus1 = fourXSquaredMinus1;
-			biggestIndex             = 1;
+		T trace = m[0][0] + m[1][1] + m[2][2];
+
+		// So we can treat w, x, y, z as an array
+		T *q = &w;
+
+		if (trace > T(0.0)) {
+			T s  = std::sqrt(trace + T(1.0));
+			q[0] = s * T(0.5);
+			s    = T(0.5) / s;
+
+			q[1] = (m[1][2] - m[2][1]) * s;
+			q[2] = (m[2][0] - m[0][2]) * s;
+			q[3] = (m[0][1] - m[1][0]) * s;
+		} else {
+			unsigned i = m[0][0] < m[1][1] ? (m[1][1] < m[2][2] ? 2u : 1u)
+			                               : (m[0][0] < m[2][2] ? 2u : 0u);
+			unsigned j = (i + 1u) % 3u;
+			unsigned k = (i + 2u) % 3u;
+
+			T s      = std::sqrt(m[i][i] - m[j][j] - m[k][k] + T(1.0));
+			q[i + 1] = s * T(0.5);
+			s        = T(0.5) / s;
+
+			q[0]     = (m[j][k] - m[k][j]) * s;
+			q[j + 1] = (m[i][j] + m[j][i]) * s;
+			q[k + 1] = (m[i][k] + m[k][i]) * s;
 		}
-		if (fourYSquaredMinus1 > fourBiggestSquaredMinus1) {
-			fourBiggestSquaredMinus1 = fourYSquaredMinus1;
-			biggestIndex             = 2;
-		}
-		if (fourZSquaredMinus1 > fourBiggestSquaredMinus1) {
-			fourBiggestSquaredMinus1 = fourZSquaredMinus1;
-			biggestIndex             = 3;
-		}
-
-		T biggestVal =
-		    sqrt(fourBiggestSquaredMinus1 + static_cast<T>(1)) * static_cast<T>(0.5);
-		T mult = static_cast<T>(0.25) / biggestVal;
-
-		switch (biggestIndex) {
-			case 0:
-				x = (m[1][2] - m[2][1]) * mult;
-				y = (m[2][0] - m[0][2]) * mult;
-				z = (m[0][1] - m[1][0]) * mult;
-				w = biggestVal;
-				break;
-			case 1:
-				x = biggestVal;
-				y = (m[0][1] + m[1][0]) * mult;
-				z = (m[2][0] + m[0][2]) * mult;
-				w = (m[1][2] - m[2][1]) * mult;
-				break;
-			case 2:
-				x = (m[0][1] + m[1][0]) * mult;
-				y = biggestVal;
-				z = (m[1][2] + m[2][1]) * mult;
-				w = (m[2][0] - m[0][2]) * mult;
-			case 3:
-				x = (m[2][0] + m[0][2]) * mult;
-				y = (m[1][2] + m[2][1]) * mult;
-				z = biggestVal;
-				w = (m[0][1] - m[1][0]) * mult;
-				break;
-			default:  // Silence a -Wswitch-default warning in GCC. Should never actually get
-			          // here. Assert is just for sanity.
-				assert(false);
-				x = T(0);
-				y = T(0);
-				z = T(0);
-				w = T(1);
-				break;
-		}
-
-		// T trace = m[0][0] + m[1][1] + m[2][2];
-		// T temp[4];
-
-		// if (T(0) < trace) {
-		// 	T s     = std::sqrt(trace + T(1));
-		// 	temp[3] = (s * static_cast<T>(0.5));
-		// 	s       = static_cast<T>(0.5) / s;
-
-		// 	temp[0] = ((m[1][2] - m[2][1]) * s);
-		// 	temp[1] = ((m[2][0] - m[0][2]) * s);
-		// 	temp[2] = ((m[0][1] - m[1][0]) * s);
-		// } else {
-		// 	int i =
-		// 	    m[0][0] < m[1][1] ? (m[1][1] < m[2][2] ? 2 : 1) : (m[0][0] < m[2][2] ? 2 : 0);
-		// 	int j = (i + 1) % 3;
-		// 	int k = (i + 2) % 3;
-
-		// 	T s     = std::sqrt(m[i][i] - m[j][j] - m[k][k] + T(1));
-		// 	temp[i] = s * static_cast<T>(0.5);
-		// 	s       = static_cast<T>(0.5) / s;
-
-		// 	temp[3] = (m[j][k] - m[k][j]) * s;
-		// 	temp[j] = (m[i][j] + m[j][i]) * s;
-		// 	temp[k] = (m[i][k] + m[k][i]) * s;
-		// }
-		// x = temp[0];
-		// y = temp[1];
-		// z = temp[2];
-		// w = temp[3];
 	}
 
 	constexpr Quat(Mat4x4<T> const &m) noexcept : Quat(Mat3x3<T>(m)) {}
@@ -223,12 +171,12 @@ struct Quat {
 	constexpr Quat &operator=(Quat const &) noexcept = default;
 
 	template <class U>
-	constexpr Quat &operator=(Quat<U> rhs) noexcept
+	constexpr Quat &operator=(Quat<U> const &rhs) noexcept
 	{
-		w = rhs.w;
-		x = rhs.x;
-		y = rhs.y;
-		z = rhs.z;
+		w = static_cast<T>(rhs.w);
+		x = static_cast<T>(rhs.x);
+		y = static_cast<T>(rhs.y);
+		z = static_cast<T>(rhs.z);
 		return *this;
 	}
 
@@ -240,29 +188,31 @@ struct Quat {
 
 	constexpr explicit operator Mat3x3<T>() const
 	{
-		Mat3x3<T> Result(T(1));
-		T         qxx(x * x);
-		T         qyy(y * y);
-		T         qzz(z * z);
-		T         qxz(x * z);
-		T         qxy(x * y);
-		T         qyz(y * z);
-		T         qwx(w * x);
-		T         qwy(w * y);
-		T         qwz(w * z);
+		T xx(x * x);
+		T yy(y * y);
+		T zz(z * z);
+		T xz(x * z);
+		T xy(x * y);
+		T yz(y * z);
+		T wx(w * x);
+		T wy(w * y);
+		T wz(w * z);
 
-		Result[0][0] = T(1) - T(2) * (qyy + qzz);
-		Result[0][1] = T(2) * (qxy + qwz);
-		Result[0][2] = T(2) * (qxz - qwy);
+		T x1 = T(1) - T(2) * (yy + zz);
+		T y1 = T(2) * (xy + wz);
+		T z1 = T(2) * (xz - wy);
 
-		Result[1][0] = T(2) * (qxy - qwz);
-		Result[1][1] = T(1) - T(2) * (qxx + qzz);
-		Result[1][2] = T(2) * (qyz + qwx);
+		T x2 = T(2) * (xy - wz);
+		T y2 = T(1) - T(2) * (xx + zz);
+		T z2 = T(2) * (yz + wx);
 
-		Result[2][0] = T(2) * (qxz + qwy);
-		Result[2][1] = T(2) * (qyz - qwx);
-		Result[2][2] = T(1) - T(2) * (qxx + qyy);
-		return Result;
+		T x3 = T(2) * (xz + wy);
+		T y3 = T(2) * (yz - wx);
+		T z3 = T(1) - T(2) * (xx + yy);
+
+		return Mat3x3<T>(x1, y1, z1,   // First column
+		                 x2, y2, z2,   // Second column
+		                 x3, y3, z3);  // Third column
 	}
 
 	constexpr explicit operator Mat4x4<T>() const
@@ -288,185 +238,65 @@ struct Quat {
 		return (&x)[pos];
 	}
 
-	[[nodiscard]] static constexpr Quat fromEuler(T yaw, T pitch, T roll) noexcept
+	/**************************************************************************************
+	|                                                                                     |
+	|                            Compound assignment operator                             |
+	|                                                                                     |
+	**************************************************************************************/
+
+	template <class U>
+	Quat<T> &operator+=(Quat<U> const &q)
 	{
-		T hy = yaw * T(0.5);
-		T hp = pitch * T(0.5);
-		T hr = roll * T(0.5);
-		T cy = std::cos(hy);
-		T sy = std::sin(hy);
-		T cp = std::cos(hp);
-		T sp = std::sin(hp);
-		T cr = std::cos(hr);
-		T sr = std::sin(hr);
-		return {
-		    cr * sp * cy + sr * cp * sy,  // x
-		    cr * cp * sy - sr * sp * cy,  // y
-		    sr * cp * cy - cr * sp * sy,  // z
-		    cr * cp * cy + sr * sp * sy   // w
-		};
-	}
-
-	[[nodiscard]] static constexpr Quat fromRPY(T roll, T pitch, T yaw) noexcept
-	{
-		T hy = yaw * T(0.5);
-		T hp = pitch * T(0.5);
-		T hr = roll * T(0.5);
-		T cy = std::cos(hy);
-		T sy = std::sin(hy);
-		T cp = std::cos(hp);
-		T sp = std::sin(hp);
-		T cr = std::cos(hr);
-		T sr = std::sin(hr);
-		return {
-		    sr * cp * cy - cr * sp * sy,  // x
-		    cr * sp * cy + sr * cp * sy,  // y
-		    cr * cp * sy - sr * sp * cy,  // z
-		    cr * cp * cy + sr * sp * sy   // w
-		};
-	}
-
-	constexpr Vec3<T> toEuler() const noexcept
-	{  // create rotational matrix
-		T n = norm();
-		T s = n > T(0) ? T(2) / (n * n) : T(0);
-
-		T xs = x * s;
-		T ys = y * s;
-		T zs = z * s;
-
-		T wx = w * xs;
-		T wy = w * ys;
-		T wz = w * zs;
-
-		T xx = x * xs;
-		T xy = x * ys;
-		T xz = x * zs;
-
-		T yy = y * ys;
-		T yz = y * zs;
-		T zz = z * zs;
-
-		T m[3][3];
-
-		m[0][0] = T(1) - (yy + zz);
-		m[1][1] = T(1) - (xx + zz);
-		m[2][2] = T(1) - (xx + yy);
-
-		m[1][0] = xy + wz;
-		m[0][1] = xy - wz;
-
-		m[2][0] = xz - wy;
-		m[0][2] = xz + wy;
-		m[2][1] = yz + wx;
-		m[1][2] = yz - wx;
-
-		T roll  = std::atan2(m[2][1], m[2][2]);
-		T pitch = std::atan2(-m[2][0], std::sqrt(m[2][1] * m[2][1] + m[2][2] * m[2][2]));
-		T yaw   = std::atan2(m[1][0], m[0][0]);
-
-		return Vec3<T>(roll, pitch, yaw);
-	}
-
-	constexpr auto norm() const noexcept
-	{
-		T n = 0;
-		for (unsigned int i = 0; i < 4; i++) {
-			n += operator[](i) * operator[](i);
-		}
-		return std::sqrt(n);
-	}
-
-	constexpr auto normSquared() const noexcept
-	{
-		T n = 0;
-		for (unsigned int i = 0; i < 4; i++) {
-			n += operator[](i) * operator[](i);
-		}
-		return n;
-	}
-
-	constexpr Quat normalized() const noexcept
-	{
-		Quat result(*this);
-		result.normalize();
-		return result;
-	}
-
-	constexpr Quat &normalize() noexcept
-	{
-		T len = norm();
-		if (len > T(0)) *this /= len;
+		w += q.w;
+		x += q.x;
+		y += q.y;
+		z += q.z;
 		return *this;
 	}
 
-	constexpr void operator/=(T x) noexcept
+	template <class U>
+	Quat<T> &operator-=(Quat<U> const &q)
 	{
-		for (unsigned int i = 0; i < 4; ++i) {
-			operator[](i) /= x;
-		}
-	}
-
-	constexpr bool operator==(Quat const &rhs) const noexcept
-	{
-		for (unsigned int i = 0; i < 4; i++) {
-			if (operator[](i) != rhs[i]) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	constexpr bool operator!=(Quat const &rhs) const noexcept { return !(*this == rhs); }
-
-	constexpr Quat operator*(Quat const &rhs) const noexcept
-	{
-		return Quat(w * rhs.w - x * rhs.x - y * rhs.y - z * rhs.z,
-		            w * rhs.x + x * rhs.w + y * rhs.z - z * rhs.y,
-		            w * rhs.y - x * rhs.z + y * rhs.w + z * rhs.x,
-		            w * rhs.z + x * rhs.y - y * rhs.x + z * rhs.w);
-	}
-
-	template <typename T2>
-	constexpr Quat operator*(Vec3<T2> const &v) const noexcept
-	{
-		return *this * Quat(0, v(0), v(1), v(2));
-	}
-
-	constexpr Quat inversed() const noexcept { return Quat(w, -x, -y, -z); }
-
-	constexpr Quat &inverse() noexcept
-	{
-		x = -x;
-		y = -y;
-		z = -z;
+		w -= q.w;
+		x -= q.x;
+		y -= q.y;
+		z -= q.z;
 		return *this;
 	}
 
-	template <class P>
-	constexpr P rotate(P point) const noexcept
+	template <class U>
+	Quat<T> &operator*=(Quat<U> const &q)
 	{
-		Quat q  = *this * point * this->inversed();
-		point.x = q.x;
-		point.y = q.y;
-		point.z = q.z;
-		return point;
+		Quat<T> const p(*this);
+		Quat<T> const qt(q);
+
+		w = p.w * qt.w - p.x * qt.x - p.y * qt.y - p.z * qt.z;
+		x = p.w * qt.x + p.x * qt.w + p.y * qt.z - p.z * qt.y;
+		y = p.w * qt.y + p.y * qt.w + p.z * qt.x - p.x * qt.z;
+		z = p.w * qt.z + p.z * qt.w + p.x * qt.y - p.y * qt.x;
+
+		return *this;
 	}
 
-	template <class P>
-	constexpr void rotateInPlace(P &point) const noexcept
+	template <class U>
+	Quat<T> &operator*=(U s)
 	{
-		Quat q  = *this * point * this->inversed();
-		point.x = q.x;
-		point.y = q.y;
-		point.z = q.z;
+		w *= s;
+		x *= s;
+		y *= s;
+		z *= s;
+		return *this;
 	}
 
-	constexpr T roll() const noexcept { return toEuler()[0]; }
-
-	constexpr T pitch() const noexcept { return toEuler()[1]; }
-
-	constexpr T yaw() const noexcept { return toEuler()[2]; }
+	template <class U>
+	Quat<T> &operator/=(U s)
+	{
+		w /= s;
+		x /= s;
+		y /= s;
+		z /= s;
+		return *this;
+	}
 
 	/**************************************************************************************
 	|                                                                                     |
@@ -491,8 +321,111 @@ struct Quat {
 	}
 };
 
-using Quatf = Quat<float>;
-using Quatd = Quat<double>;
+/**************************************************************************************
+|                                                                                     |
+|                                   Unary operators                                   |
+|                                                                                     |
+**************************************************************************************/
+
+template <class T>
+Quat<T> operator+(Quat<T> const &q)
+{
+	return q;
+}
+
+template <class T>
+Quat<T> operator-(Quat<T> const &q)
+{
+	return Quat<T>(-q.w, -q.x, -q.y, -q.z);
+}
+
+/**************************************************************************************
+|                                                                                     |
+|                                  Binary operators                                   |
+|                                                                                     |
+**************************************************************************************/
+
+template <class T>
+Quat<T> operator+(Quat<T> const &q, Quat<T> const &p)
+{
+	return Quat<T>(q) += p;
+}
+
+template <class T>
+Quat<T> operator-(Quat<T> const &q, Quat<T> const &p)
+{
+	return Quat<T>(q) -= p;
+}
+
+template <class T>
+Quat<T> operator*(Quat<T> const &q, Quat<T> const &p)
+{
+	return Quat<T>(q) *= p;
+}
+
+template <class T>
+Vec<3, T> operator*(Quat<T> const &q, Vec<3, T> const &v)
+{
+	Vec<3, T> const quat_vector(q.x, q.y, q.z);
+	Vec<3, T> const uv(cross(quat_vector, v));
+	Vec<3, T> const uuv(cross(quat_vector, uv));
+
+	return v + ((uv * q.w) + uuv) * T(2);
+}
+
+template <class T>
+Vec<3, T> operator*(Vec<3, T> const &v, Quat<T> const &q)
+{
+	return inverse(q) * v;
+}
+
+template <class T>
+Vec<4, T> operator*(Quat<T> const &q, Vec<4, T> const &v)
+{
+	return Vec<4, T>(q * Vec<3, T>(v), v.w);
+}
+
+template <class T>
+Vec<4, T> operator*(Vec<4, T> const &v, Quat<T> const &q)
+{
+	return inverse(q) * v;
+}
+
+template <class T>
+Quat<T> operator*(Quat<T> const &q, T const &s)
+{
+	return Quat<T>(q.w * s, q.x * s, q.y * s, q.z * s);
+}
+
+template <class T>
+Quat<T> operator*(T const &s, Quat<T> const &q)
+{
+	return q * s;
+}
+
+template <class T>
+Quat<T> operator/(Quat<T> const &q, T const &s)
+{
+	return Quat<T>(q.w / s, q.x / s, q.y / s, q.z / s);
+}
+
+/**************************************************************************************
+|                                                                                     |
+|                                       Compare                                       |
+|                                                                                     |
+**************************************************************************************/
+
+template <class T>
+[[nodiscard]] constexpr bool operator==(Quat<T> const &lhs, Quat<T> const &rhs) noexcept
+{
+	return lhs.w == rhs.w && lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z;
+}
+
+template <class T>
+[[nodiscard]] constexpr bool operator!=(Quat<T> const &lhs, Quat<T> const &rhs) noexcept
+{
+	return !(lhs == rhs);
+}
 
 /**************************************************************************************
 |                                                                                     |
@@ -507,27 +440,9 @@ void swap(Quat<T> &lhs, Quat<T> &rhs) noexcept
 }
 
 template <class T>
-std::ostream &operator<<(std::ostream &out, Quat<T> q)
+std::ostream &operator<<(std::ostream &out, Quat<T> const &q)
 {
-	return out << "qx: " << q.x << " qy: " << q.y << " qz: " << q.z << " qw: " << q.w;
-}
-
-/**************************************************************************************
-|                                                                                     |
-|                                       Compare                                       |
-|                                                                                     |
-**************************************************************************************/
-
-template <class T>
-[[nodiscard]] constexpr bool operator==(Quat<T> lhs, Quat<T> rhs) noexcept
-{
-	return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z && lhs.w == rhs.w;
-}
-
-template <class T>
-[[nodiscard]] constexpr bool operator!=(Quat<T> lhs, Quat<T> rhs) noexcept
-{
-	return !(lhs == rhs);
+	return out << "qw: " << q.w << " qx: " << q.x << " qy: " << q.y << " qz: " << q.z;
 }
 }  // namespace ufo
 
