@@ -142,7 +142,7 @@ struct Trans<3, T> {
 	constexpr explicit operator Mat<4, 4, U>() const
 	{
 		Mat<4, 4, U> m(rotation);
-		m[3] = {translation.x, translation.y, translation.z, U(1)};
+		m[3] = Vec<4, U>(translation, U(1));
 		return m;
 	}
 

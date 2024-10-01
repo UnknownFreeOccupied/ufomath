@@ -43,7 +43,7 @@
 #define UFO_MATH_MATH_HPP
 
 // UFO
-#include <ufo/math/constants.hpp>
+#include <ufo/math/numbers.hpp>
 
 // STL
 #include <type_traits>

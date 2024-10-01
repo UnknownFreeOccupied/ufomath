@@ -125,59 +125,59 @@ template <std::size_t Cols, std::size_t Rows, class T>
 		res *= d;
 		return res;
 	} else if constexpr (4 == Cols && 4 == Rows) {
-		T coef00 = m[2][2] * m[3][3] - m[3][2] * m[2][3];
-		T coef02 = m[1][2] * m[3][3] - m[3][2] * m[1][3];
-		T coef03 = m[1][2] * m[2][3] - m[2][2] * m[1][3];
+		T Coef00 = m[2][2] * m[3][3] - m[3][2] * m[2][3];
+		T Coef02 = m[1][2] * m[3][3] - m[3][2] * m[1][3];
+		T Coef03 = m[1][2] * m[2][3] - m[2][2] * m[1][3];
 
-		T coef04 = m[2][1] * m[3][3] - m[3][1] * m[2][3];
-		T coef06 = m[1][1] * m[3][3] - m[3][1] * m[1][3];
-		T coef07 = m[1][1] * m[2][3] - m[2][1] * m[1][3];
+		T Coef04 = m[2][1] * m[3][3] - m[3][1] * m[2][3];
+		T Coef06 = m[1][1] * m[3][3] - m[3][1] * m[1][3];
+		T Coef07 = m[1][1] * m[2][3] - m[2][1] * m[1][3];
 
-		T coef08 = m[2][1] * m[3][2] - m[3][1] * m[2][2];
-		T coef10 = m[1][1] * m[3][2] - m[3][1] * m[1][2];
-		T coef11 = m[1][1] * m[2][2] - m[2][1] * m[1][2];
+		T Coef08 = m[2][1] * m[3][2] - m[3][1] * m[2][2];
+		T Coef10 = m[1][1] * m[3][2] - m[3][1] * m[1][2];
+		T Coef11 = m[1][1] * m[2][2] - m[2][1] * m[1][2];
 
-		T coef12 = m[2][0] * m[3][3] - m[3][0] * m[2][3];
-		T coef14 = m[1][0] * m[3][3] - m[3][0] * m[1][3];
-		T coef15 = m[1][0] * m[2][3] - m[2][0] * m[1][3];
+		T Coef12 = m[2][0] * m[3][3] - m[3][0] * m[2][3];
+		T Coef14 = m[1][0] * m[3][3] - m[3][0] * m[1][3];
+		T Coef15 = m[1][0] * m[2][3] - m[2][0] * m[1][3];
 
-		T coef16 = m[2][0] * m[3][2] - m[3][0] * m[2][2];
-		T coef18 = m[1][0] * m[3][2] - m[3][0] * m[1][2];
-		T coef19 = m[1][0] * m[2][2] - m[2][0] * m[1][2];
+		T Coef16 = m[2][0] * m[3][2] - m[3][0] * m[2][2];
+		T Coef18 = m[1][0] * m[3][2] - m[3][0] * m[1][2];
+		T Coef19 = m[1][0] * m[2][2] - m[2][0] * m[1][2];
 
-		T coef20 = m[2][0] * m[3][1] - m[3][0] * m[2][1];
-		T coef22 = m[1][0] * m[3][1] - m[3][0] * m[1][1];
-		T coef23 = m[1][0] * m[2][1] - m[2][0] * m[1][1];
+		T Coef20 = m[2][0] * m[3][1] - m[3][0] * m[2][1];
+		T Coef22 = m[1][0] * m[3][1] - m[3][0] * m[1][1];
+		T Coef23 = m[1][0] * m[2][1] - m[2][0] * m[1][1];
 
-		Vec<4, T> fac0(coef00, coef00, coef02, coef03);
-		Vec<4, T> fac1(coef04, coef04, coef06, coef07);
-		Vec<4, T> fac2(coef08, coef08, coef10, coef11);
-		Vec<4, T> fac3(coef12, coef12, coef14, coef15);
-		Vec<4, T> fac4(coef16, coef16, coef18, coef19);
-		Vec<4, T> fac5(coef20, coef20, coef22, coef23);
+		Vec<4, T> Fac0(Coef00, Coef00, Coef02, Coef03);
+		Vec<4, T> Fac1(Coef04, Coef04, Coef06, Coef07);
+		Vec<4, T> Fac2(Coef08, Coef08, Coef10, Coef11);
+		Vec<4, T> Fac3(Coef12, Coef12, Coef14, Coef15);
+		Vec<4, T> Fac4(Coef16, Coef16, Coef18, Coef19);
+		Vec<4, T> Fac5(Coef20, Coef20, Coef22, Coef23);
 
-		Vec<4, T> vec0(m[1][0], m[0][0], m[0][0], m[0][0]);
-		Vec<4, T> vec1(m[1][1], m[0][1], m[0][1], m[0][1]);
-		Vec<4, T> vec2(m[1][2], m[0][2], m[0][2], m[0][2]);
-		Vec<4, T> vec3(m[1][3], m[0][3], m[0][3], m[0][3]);
+		Vec<4, T> Vec0(m[1][0], m[0][0], m[0][0], m[0][0]);
+		Vec<4, T> Vec1(m[1][1], m[0][1], m[0][1], m[0][1]);
+		Vec<4, T> Vec2(m[1][2], m[0][2], m[0][2], m[0][2]);
+		Vec<4, T> Vec3(m[1][3], m[0][3], m[0][3], m[0][3]);
 
-		Vec<4, T> Inv0(vec1 * fac0 - vec2 * fac1 + vec3 * fac2);
-		Vec<4, T> Inv1(vec0 * fac0 - vec2 * fac3 + vec3 * fac4);
-		Vec<4, T> Inv2(vec0 * fac1 - vec1 * fac3 + vec3 * fac5);
-		Vec<4, T> Inv3(vec0 * fac2 - vec1 * fac4 + vec2 * fac5);
+		Vec<4, T> Inv0(Vec1 * Fac0 - Vec2 * Fac1 + Vec3 * Fac2);
+		Vec<4, T> Inv1(Vec0 * Fac0 - Vec2 * Fac3 + Vec3 * Fac4);
+		Vec<4, T> Inv2(Vec0 * Fac1 - Vec1 * Fac3 + Vec3 * Fac5);
+		Vec<4, T> Inv3(Vec0 * Fac2 - Vec1 * Fac4 + Vec2 * Fac5);
 
-		Vec<4, T>    signA(+1, -1, +1, -1);
-		Vec<4, T>    signB(-1, +1, -1, +1);
-		Mat<4, 4, T> res(Inv0 * signA, Inv1 * signB, Inv2 * signA, Inv3 * signB);
+		Vec<4, T>    SignA(+1, -1, +1, -1);
+		Vec<4, T>    SignB(-1, +1, -1, +1);
+		Mat<4, 4, T> Inverse(Inv0 * SignA, Inv1 * SignB, Inv2 * SignA, Inv3 * SignB);
 
-		Vec<4, T> row0(res[0][0], res[1][0], res[2][0], res[3][0]);
+		Vec<4, T> Row0(Inverse[0][0], Inverse[1][0], Inverse[2][0], Inverse[3][0]);
 
-		Vec<4, T> dot0(m[0] * row0);
-		T         dot1 = (dot0.x + dot0.y) + (dot0.z + dot0.w);
+		Vec<4, T> Dot0(m[0] * Row0);
+		T         Dot1 = (Dot0.x + Dot0.y) + (Dot0.z + Dot0.w);
 
-		T d = static_cast<T>(1) / dot1;
+		T OneOverDeterminant = static_cast<T>(1) / Dot1;
 
-		return res * d;
+		return Inverse * OneOverDeterminant;
 	} else {
 		// Error
 	}
@@ -210,6 +210,139 @@ template <std::size_t Cols, std::size_t Rows, class T>
 		    Cols != Rows,
 		    "Cols has to be equal to Rows (only implemented for 2x2, 3x3, and 4x4)");
 	}
+}
+
+template <class T>
+[[nodiscard]] Mat<4, 4, T> orthogonal(T left, T right, T bottom, T top)
+{
+	// TODO: Implement
+}
+
+template <class T, bool RightHanded = true, bool ZeroToOne = true>
+[[nodiscard]] Mat<4, 4, T> orthogonal(T left, T right, T bottom, T top, T zNear, T zFar)
+{
+	// TODO: Implement
+}
+
+template <class T, bool RightHanded = true, bool ZeroToOne = true>
+[[nodiscard]] Mat<4, 4, T> perspective(T fovy, T aspect, T near, T far)
+{
+	Mat<4, 4, T> m(T(0));
+
+	T const tan_half_fovy = std::tan(fovy / T(2));
+
+	if constexpr (RightHanded && ZeroToOne) {
+		m[0][0] = T(1) / (aspect * tan_half_fovy);
+		m[1][1] = T(1) / (tan_half_fovy);
+		m[2][2] = far / (near - far);
+		m[2][3] = -T(1);
+		m[3][2] = -(far * near) / (far - near);
+	} else if constexpr (RightHanded && !ZeroToOne) {
+		m[0][0] = T(1) / (aspect * tan_half_fovy);
+		m[1][1] = T(1) / (tan_half_fovy);
+		m[2][2] = -(far + near) / (far - near);
+		m[2][3] = -T(1);
+		m[3][2] = -(T(2) * far * near) / (far - near);
+	} else if constexpr (!RightHanded && ZeroToOne) {
+		m[0][0] = T(1) / (aspect * tan_half_fovy);
+		m[1][1] = T(1) / (tan_half_fovy);
+		m[2][2] = far / (far - near);
+		m[2][3] = T(1);
+		m[3][2] = -(far * near) / (far - near);
+	} else if constexpr (!RightHanded && !ZeroToOne) {
+		m[0][0] = T(1) / (aspect * tan_half_fovy);
+		m[1][1] = T(1) / (tan_half_fovy);
+		m[2][2] = (far + near) / (far - near);
+		m[2][3] = T(1);
+		m[3][2] = -(T(2) * far * near) / (far - near);
+	}
+
+	return m;
+}
+
+template <class T, bool RightHanded = true, bool ZeroToOne = true>
+[[nodiscard]] Mat<4, 4, T> infinitePerspective(T fovy, T aspect, T near)
+{
+	Mat<4, 4, T> m(T(0));
+
+	T const range  = std::tan(fovy / T(2)) * near;
+	T const left   = -range * aspect;
+	T const right  = range * aspect;
+	T const bottom = -range;
+	T const top    = range;
+
+	if constexpr (RightHanded && ZeroToOne) {
+		m[0][0] = (T(2) * near) / (right - left);
+		m[1][1] = (T(2) * near) / (top - bottom);
+		m[2][2] = -T(1);
+		m[2][3] = -T(1);
+		m[3][2] = -near;
+	} else if constexpr (RightHanded && !ZeroToOne) {
+		m[0][0] = (T(2) * near) / (right - left);
+		m[1][1] = (T(2) * near) / (top - bottom);
+		m[2][2] = -T(1);
+		m[2][3] = -T(1);
+		m[3][2] = -T(2) * near;
+	} else if constexpr (!RightHanded && ZeroToOne) {
+		m[0][0] = (T(2) * near) / (right - left);
+		m[1][1] = (T(2) * near) / (top - bottom);
+		m[2][2] = T(1);
+		m[2][3] = T(1);
+		m[3][2] = -near;
+	} else if constexpr (!RightHanded && !ZeroToOne) {
+		m[0][0] = (T(2) * near) / (right - left);
+		m[1][1] = (T(2) * near) / (top - bottom);
+		m[2][2] = T(1);
+		m[2][3] = T(1);
+		m[3][2] = -T(2) * near;
+	}
+
+	return m;
+}
+
+template <class T, bool RightHanded = true>
+[[nodiscard]] Mat<4, 4, T> lookAt(Vec<3, T> const& eye, Vec<3, T> const& target,
+                                  Vec<3, T> const& up)
+{
+	Mat<4, 4, T> m(1);
+
+	if constexpr (RightHanded) {
+		Vec<3, T> const f(normalize(target - eye));
+		Vec<3, T> const s(normalize(cross(f, up)));
+		Vec<3, T> const u(cross(s, f));
+
+		m[0][0] = s.x;
+		m[1][0] = s.y;
+		m[2][0] = s.z;
+		m[0][1] = u.x;
+		m[1][1] = u.y;
+		m[2][1] = u.z;
+		m[0][2] = -f.x;
+		m[1][2] = -f.y;
+		m[2][2] = -f.z;
+		m[3][0] = -dot(s, eye);
+		m[3][1] = -dot(u, eye);
+		m[3][2] = dot(f, eye);
+	} else {
+		Vec<3, T> const f(normalize(target - eye));
+		Vec<3, T> const s(normalize(cross(up, f)));
+		Vec<3, T> const u(cross(f, s));
+
+		m[0][0] = s.x;
+		m[1][0] = s.y;
+		m[2][0] = s.z;
+		m[0][1] = u.x;
+		m[1][1] = u.y;
+		m[2][1] = u.z;
+		m[0][2] = f.x;
+		m[1][2] = f.y;
+		m[2][2] = f.z;
+		m[3][0] = -dot(s, eye);
+		m[3][1] = -dot(u, eye);
+		m[3][2] = -dot(f, eye);
+	}
+
+	return m;
 }
 }  // namespace ufo
 

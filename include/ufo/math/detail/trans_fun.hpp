@@ -67,7 +67,7 @@ template <std::size_t Dim, class T>
 template <std::size_t Dim, class T, class InputIt, class OutputIt>
 OutputIt trans(Trans<Dim, T> const& t, InputIt first, InputIt last, OutputIt d_first)
 {
-	return std::trans(first, last, d_first, [t = Mat<Dim + 1, Dim + 1, T>(t)](auto e) {
+	return std::transform(first, last, d_first, [t = Mat<Dim + 1, Dim + 1, T>(t)](auto e) {
 		Vec v = e;
 		// std::cout << "Weee: " << v << std::endl;
 		using U = typename std::decay_t<decltype(v)>::value_type;
@@ -141,7 +141,8 @@ RandomIt2 trans(ExecutionPolicy&& policy, Trans<Dim, T> const& t, RandomIt1 firs
 	};
 
 #if defined(UFO_TBB)
-	return std::trans(std::forward<ExecutionPolicy>(policy), first, last, d_first, trans);
+	return std::transform(std::forward<ExecutionPolicy>(policy), first, last, d_first,
+	                      trans);
 #elif defined(UFO_OMP)
 	std::size_t size = std::distance(first, last);
 
