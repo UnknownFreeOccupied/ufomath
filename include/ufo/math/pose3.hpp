@@ -69,6 +69,17 @@ struct Pose<3, T> {
 	constexpr Pose() noexcept             = default;
 	constexpr Pose(Pose const &) noexcept = default;
 
+	constexpr Pose(Vec3<T> const &position, Mat3x3<T> const &orientation) noexcept
+	    : position(position), orientation(orientation)
+	{
+	}
+
+	template <class T1, class T2>
+	constexpr Pose(Vec3<T1> position, Mat3x3<T2> const &orientation) noexcept
+	    : position(position), orientation(orientation)
+	{
+	}
+
 	constexpr Pose(Vec3<T> position, Quat<T> orientation) noexcept
 	    : position(position), orientation(orientation)
 	{
@@ -76,12 +87,6 @@ struct Pose<3, T> {
 
 	template <class Position, class Orientation>
 	constexpr Pose(Vec3<Position> position, Quat<Orientation> orientation) noexcept
-	    : position(position), orientation(orientation)
-	{
-	}
-
-	template <class Position, class U>
-	constexpr Pose(Vec3<Position> position, Mat3x3<U> const &orientation) noexcept
 	    : position(position), orientation(orientation)
 	{
 	}
