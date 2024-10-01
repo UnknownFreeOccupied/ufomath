@@ -104,7 +104,8 @@ struct Mat<4, 4, T> {
 	}
 
 	template <class V1, class V2, class V3, class V4>
-	constexpr Mat(Vec3<V1> v1, Vec3<V2> v2, Vec3<V3> v3, Vec3<V4> v4) noexcept
+	constexpr Mat(Vec4<V1> const& v1, Vec4<V2> const& v2, Vec4<V3> const& v3,
+	              Vec4<V4> const& v4) noexcept
 	    : value_{static_cast<column_type>(v1), static_cast<column_type>(v2),
 	             static_cast<column_type>(v3), static_cast<column_type>(v4)}
 	{
