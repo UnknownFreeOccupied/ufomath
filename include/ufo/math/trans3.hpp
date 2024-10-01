@@ -39,30 +39,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UFO_MATH_POSE2_HPP
-#define UFO_MATH_POSE2_HPP
+#ifndef UFO_MATH_TRANS3_HPP
+#define UFO_MATH_TRANS3_HPP
 
 // UFO
-#include <ufo/math/detail/pose.hpp>
-#include <ufo/math/detail/pose_fun.hpp>
-#include <ufo/math/mat2x2.hpp>
+#include <ufo/math/detail/trans.hpp>
+#include <ufo/math/detail/trans_fun.hpp>
 #include <ufo/math/mat3x3.hpp>
-#include <ufo/math/vec2.hpp>
-
-// STL
-#include <cmath>
-#include <cstddef>
+#include <ufo/math/mat4x4.hpp>
+#include <ufo/math/quat.hpp>
+#include <ufo/math/vec3.hpp>
 
 namespace ufo
 {
 template <class T>
-struct Pose<2, T> {
+struct Trans<3, T> {
 	using value_type = T;
 	using size_type  = std::size_t;
 
-	Vec2<T> position;
-	// Orientation in radius
-	T theta{};
+	Mat<3, 3, T> rotation;
+	Vec<3, T>    translation;
 
 	/**************************************************************************************
 	|                                                                                     |
@@ -70,39 +66,47 @@ struct Pose<2, T> {
 	|                                                                                     |
 	**************************************************************************************/
 
-	constexpr Pose() noexcept             = default;
-	constexpr Pose(Pose const &) noexcept = default;
+	constexpr Trans() noexcept             = default;
+	constexpr Trans(Trans const&) noexcept = default;
 
-	constexpr Pose(Vec2<T> position, T theta) noexcept : position(position), theta(theta) {}
-
-	template <class Position, class Theta>
-	constexpr Pose(Vec2<Position> position, Theta theta) noexcept
-	    : position(position), theta(static_cast<T>(theta))
+	constexpr Trans(Mat<3, 3, T> const& rotation, Vec<3, T> const& translation)
+	    : rotation(rotation), translation(translation)
 	{
 	}
 
-	template <class Position, class U>
-	constexpr Pose(Vec2<Position> position, Mat2x2<U> const &theta) noexcept
-	    : position(position), theta(...)
-	{
-	}
+	constexpr explicit Trans(Mat<3, 3, T> const& rotation) : rotation(rotation) {}
 
-	template <class U>
-	constexpr explicit Pose(Mat3x3<U> const &m) : position(m[2]), theta(...)
-	{
-	}
-
-	constexpr Pose(T x, T y, T theta) noexcept : position(x, y), theta(theta) {}
-
-	template <class X, class Y, class Theta>
-	constexpr Pose(X x, Y y, Theta theta) noexcept
-	    : position(x, y), theta(static_cast<T>(theta))
+	template <class T1, class T2>
+	constexpr Trans(Mat<3, 3, T1> const& rotation, Vec<3, T2> const& translation)
+	    : rotation(rotation), translation(translation)
 	{
 	}
 
 	template <class U>
-	constexpr Pose(Pose<2, U> const &other) noexcept
-	    : position(other.position), theta(static_cast<T>(other.theta))
+	constexpr explicit Trans(Mat<3, 3, U> const& rotation) : rotation(rotation)
+	{
+	}
+
+	template <class T1, class T2>
+	constexpr Trans(Quat<T1> const& rotation, Vec<3, T2> const& translation)
+	    : Trans(Mat<3, 3, T1>(rotation), translation)
+	{
+	}
+
+	template <class U>
+	constexpr explicit Trans(Quat<U> const& rotation) : Trans(Mat<3, 3, U>(rotation))
+	{
+	}
+
+	template <class U>
+	constexpr explicit Trans(Mat<4, 4, U> const& m)
+	    : Trans(Mat<3, 3, U>(m), Vec<3, U>(m[3]))
+	{
+	}
+
+	template <class U>
+	constexpr explicit Trans(Trans<3, U> const& other) noexcept
+	    : rotation(other.rotation), translation(other.translation)
 	{
 	}
 
@@ -112,13 +116,13 @@ struct Pose<2, T> {
 	|                                                                                     |
 	**************************************************************************************/
 
-	constexpr Pose &operator=(Pose const &) noexcept = default;
+	constexpr Trans& operator=(Trans const&) noexcept = default;
 
 	template <class U>
-	constexpr Pose &operator=(Pose<2, U> rhs) noexcept
+	constexpr Trans& operator=(Trans<3, U> const& rhs) noexcept
 	{
-		position = rhs.position;
-		theta    = static_cast<T>(rhs.theta);
+		rotation    = rhs.rotation;
+		translation = rhs.translation;
 		return *this;
 	}
 
@@ -128,29 +132,78 @@ struct Pose<2, T> {
 	|                                                                                     |
 	**************************************************************************************/
 
-	constexpr explicit operator Mat2x2<T>() const
+	template <class U>
+	constexpr explicit operator Mat<3, 3, U>() const
 	{
-		auto sin_theta = std::sin(theta);
-		auto cos_theta = std::cos(theta);
-
-		// clang-format off
-		return {cos_theta, -sin_theta,
-		        sin_theta,  cos_theta};
-		// clang-format on
+		return Mat<3, 3, U>(rotation);
 	}
 
-	constexpr explicit operator Mat3x3<T>() const
+	template <class U>
+	constexpr explicit operator Mat<4, 4, U>() const
 	{
-		auto sin_theta = std::sin(theta);
-		auto cos_theta = std::cos(theta);
+		Mat<4, 4, U> m(rotation);
+		m[3] = {translation.x, translation.y, translation.z, U(1)};
+		return m;
+	}
 
-		// clang-format off
-		return {cos_theta, -sin_theta, position.x,
-		        sin_theta,  cos_theta, position.y,
-						T(0),       T(0),      T(1)};
-		// clang-format on
+	template <class U>
+	constexpr explicit operator Quat<U>() const
+	{
+		return Quat<U>(rotation);
+	}
+
+	/**************************************************************************************
+	|                                                                                     |
+	|                                      Something                                      |
+	|                                                                                     |
+	**************************************************************************************/
+
+	template <class U>
+	[[nodiscard]] Vec<3, U> operator()(Vec<3, U> const& v) const
+	{
+		return Mat<4, 4, U>(*this) * Vec<4, U>(v, U(1));
+	}
+
+	template <class U>
+	[[nodiscard]] Quat<U> operator()(Quat<U> const& q) const
+	{
+		return Quat<U>(*this) * q;
+	}
+
+	template <class U>
+	Trans& operator*=(Trans<3, U> const& t)
+	{
+		auto trans = *this * t.translation;
+		rotation *= t.rotation;
+		translation = trans;
 	}
 };
+
+template <class T>
+Trans<3, T> operator*(Trans<3, T> const& t1, Trans<3, T> const& t2)
+{
+	Trans<3, T> t = t1;
+	t *= t2;
+	return t;
+}
+
+template <class T>
+Vec<3, T> operator*(Trans<3, T> const& t, Vec<3, T> const& v)
+{
+	return t(v);
+}
+
+template <class T>
+Quat<T> operator*(Trans<3, T> const& t, Quat<T> const& q)
+{
+	return t(q);
+}
+
+template <class T>
+std::ostream& operator<<(std::ostream& out, Trans<3, T> const& t)
+{
+	return out << "Translation: " << t.translation << ", Rotation: " << Quat<T>(t);
+}
 }  // namespace ufo
 
-#endif  // UFO_MATH_POSE2_HPP
+#endif  // UFO_MATH_TRANS3_HPP

@@ -54,7 +54,7 @@
 namespace ufo
 {
 template <std::size_t Dim, class T>
-std::ostream &operator<<(std::ostream &out, Vec<Dim, T> v)
+std::ostream& operator<<(std::ostream& out, Vec<Dim, T> const& v)
 {
 	out << "x: " << v.x;
 	if constexpr (1 < Dim) {
@@ -70,49 +70,49 @@ std::ostream &operator<<(std::ostream &out, Vec<Dim, T> v)
 }
 
 template <std::size_t Dim, class T>
-void swap(Vec<Dim, T> &lhs, Vec<Dim, T> &rhs) noexcept
+void swap(Vec<Dim, T>& lhs, Vec<Dim, T>& rhs) noexcept
 {
 	lhs.swap(rhs);
 }
 
 template <std::size_t Dim, class T>
-[[nodiscard]] T *begin(Vec<Dim, T> &v) noexcept
+[[nodiscard]] T* begin(Vec<Dim, T>& v) noexcept
 {
 	return &v.x;
 }
 
 template <std::size_t Dim, class T>
-[[nodiscard]] T const *begin(Vec<Dim, T> const &v) noexcept
+[[nodiscard]] T const* begin(Vec<Dim, T> const& v) noexcept
 {
 	return &v.x;
 }
 
 template <std::size_t Dim, class T>
-[[nodiscard]] T const *cbegin(Vec<Dim, T> const &v) noexcept
+[[nodiscard]] T const* cbegin(Vec<Dim, T> const& v) noexcept
 {
 	return begin(v);
 }
 
 template <std::size_t Dim, class T>
-[[nodiscard]] T *end(Vec<Dim, T> &v) noexcept
+[[nodiscard]] T* end(Vec<Dim, T>& v) noexcept
 {
 	return &v.x + Dim;
 }
 
 template <std::size_t Dim, class T>
-[[nodiscard]] T const *end(Vec<Dim, T> const &v) noexcept
+[[nodiscard]] T const* end(Vec<Dim, T> const& v) noexcept
 {
 	return &v.x + Dim;
 }
 
 template <std::size_t Dim, class T>
-[[nodiscard]] T const *cend(Vec<Dim, T> const &v) noexcept
+[[nodiscard]] T const* cend(Vec<Dim, T> const& v) noexcept
 {
 	return end(v);
 }
 
 template <class T, std::size_t Dim, class U>
-[[nodiscard]] constexpr Vec<Dim, T> cast(Vec<Dim, U> const &v)
+[[nodiscard]] constexpr Vec<Dim, T> cast(Vec<Dim, U> const& v)
 {
 	return Vec<Dim, T>(v);
 }
@@ -416,15 +416,15 @@ template <std::size_t Dim, class T, class F>
 }
 
 template <std::size_t Dim, class T, class U>
-[[nodiscard]] constexpr Vec<Dim, T> mix(Vec<Dim, T> const &x, Vec<Dim, T> const &y,
-                                        Vec<Dim, U> const &a)
+[[nodiscard]] constexpr Vec<Dim, T> mix(Vec<Dim, T> const& x, Vec<Dim, T> const& y,
+                                        Vec<Dim, U> const& a)
 {
 	return Vec<Dim, T>(Vec<Dim, U>(x) * (static_cast<U>(1) - a) + Vec<Dim, U>(y) * a);
 }
 
 template <std::size_t Dim, class T>
-[[nodiscard]] constexpr Vec<Dim, T> mix(Vec<Dim, T> const &x, Vec<Dim, T> const &y,
-                                        Vec<Dim, bool> const &a)
+[[nodiscard]] constexpr Vec<Dim, T> mix(Vec<Dim, T> const& x, Vec<Dim, T> const& y,
+                                        Vec<Dim, bool> const& a)
 {
 	Vec<Dim, T> res(0);
 	for (std::size_t i{}; Dim > i; ++i) {

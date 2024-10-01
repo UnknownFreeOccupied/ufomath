@@ -39,11 +39,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UFO_MATH_POSE_HPP
-#define UFO_MATH_POSE_HPP
+#ifndef UFO_MATH_DETAIL_TRANS_HPP
+#define UFO_MATH_DETAIL_TRANS_HPP
 
-// UFO
-#include <ufo/math/pose2.hpp>
-#include <ufo/math/pose3.hpp>
+// STL
+#include <cstddef>
 
-#endif  // UFO_MATH_POSE_HPP
+namespace ufo
+{
+template <std::size_t Dim, class T = float>
+struct Trans;
+
+template <class T = float>
+using Trans2 = Trans<2, T>;
+template <class T = float>
+using Trans3 = Trans<3, T>;
+
+using Trans2f = Trans2<float>;
+using Trans2d = Trans2<double>;
+using Trans3f = Trans3<float>;
+using Trans3d = Trans3<double>;
+}  // namespace ufo
+
+#endif  // UFO_MATH_DETAIL_TRANS_HPP

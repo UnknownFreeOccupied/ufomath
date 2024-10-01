@@ -67,8 +67,8 @@ struct Vec<1, T> {
 	|                                                                                     |
 	**************************************************************************************/
 
-	constexpr Vec() noexcept            = default;
-	constexpr Vec(Vec const &) noexcept = default;
+	constexpr Vec() noexcept           = default;
+	constexpr Vec(Vec const&) noexcept = default;
 
 	constexpr explicit Vec(T x) noexcept : x(x) {}
 
@@ -98,10 +98,10 @@ struct Vec<1, T> {
 	|                                                                                     |
 	**************************************************************************************/
 
-	constexpr Vec &operator=(Vec const &) noexcept = default;
+	constexpr Vec& operator=(Vec const&) noexcept = default;
 
 	template <class U>
-	constexpr Vec &operator=(Vec<1, U> rhs) noexcept
+	constexpr Vec& operator=(Vec<1, U> rhs) noexcept
 	{
 		x = static_cast<T>(rhs.x);
 		return *this;
@@ -113,13 +113,13 @@ struct Vec<1, T> {
 	|                                                                                     |
 	**************************************************************************************/
 
-	[[nodiscard]] constexpr T &operator[](size_type pos) noexcept
+	[[nodiscard]] constexpr T& operator[](size_type pos) noexcept
 	{
 		assert(size() > pos);
 		return x;
 	}
 
-	[[nodiscard]] constexpr T const &operator[](size_type pos) const noexcept
+	[[nodiscard]] constexpr T const& operator[](size_type pos) const noexcept
 	{
 		assert(size() > pos);
 		return x;
@@ -144,140 +144,140 @@ struct Vec<1, T> {
 	**************************************************************************************/
 
 	template <class U>
-	constexpr Vec &operator+=(U value) noexcept
+	constexpr Vec& operator+=(U value) noexcept
 	{
 		x += static_cast<T>(value);
 		return *this;
 	}
 
 	template <class U>
-	constexpr Vec &operator+=(Vec<1, U> v) noexcept
+	constexpr Vec& operator+=(Vec<1, U> v) noexcept
 	{
 		x += static_cast<T>(v.x);
 		return *this;
 	}
 
 	template <class U>
-	constexpr Vec &operator-=(U value) noexcept
+	constexpr Vec& operator-=(U value) noexcept
 	{
 		x -= static_cast<T>(value);
 		return *this;
 	}
 
 	template <class U>
-	constexpr Vec &operator-=(Vec<1, U> v) noexcept
+	constexpr Vec& operator-=(Vec<1, U> v) noexcept
 	{
 		x -= static_cast<T>(v.x);
 		return *this;
 	}
 
 	template <class U>
-	constexpr Vec &operator*=(U value) noexcept
+	constexpr Vec& operator*=(U value) noexcept
 	{
 		x *= static_cast<T>(value);
 		return *this;
 	}
 
 	template <class U>
-	constexpr Vec &operator*=(Vec<1, U> v) noexcept
+	constexpr Vec& operator*=(Vec<1, U> v) noexcept
 	{
 		x *= static_cast<T>(v.x);
 		return *this;
 	}
 
 	template <class U>
-	constexpr Vec &operator/=(U value) noexcept
+	constexpr Vec& operator/=(U value) noexcept
 	{
 		x /= static_cast<T>(value);
 		return *this;
 	}
 
 	template <class U>
-	constexpr Vec &operator/=(Vec<1, U> v) noexcept
+	constexpr Vec& operator/=(Vec<1, U> v) noexcept
 	{
 		x /= static_cast<T>(v.x);
 		return *this;
 	}
 
 	template <class U>
-	constexpr Vec &operator%=(U value) noexcept
+	constexpr Vec& operator%=(U value) noexcept
 	{
 		x %= static_cast<T>(value);
 		return *this;
 	}
 
 	template <class U>
-	constexpr Vec &operator%=(Vec<1, U> v) noexcept
+	constexpr Vec& operator%=(Vec<1, U> v) noexcept
 	{
 		x %= static_cast<T>(v.x);
 		return *this;
 	}
 
 	template <class U>
-	constexpr Vec &operator&=(U value) noexcept
+	constexpr Vec& operator&=(U value) noexcept
 	{
 		x &= static_cast<T>(value);
 		return *this;
 	}
 
 	template <class U>
-	constexpr Vec &operator&=(Vec<1, U> v) noexcept
+	constexpr Vec& operator&=(Vec<1, U> v) noexcept
 	{
 		x &= static_cast<T>(v.x);
 		return *this;
 	}
 
 	template <class U>
-	constexpr Vec &operator|=(U value) noexcept
+	constexpr Vec& operator|=(U value) noexcept
 	{
 		x |= static_cast<T>(value);
 		return *this;
 	}
 
 	template <class U>
-	constexpr Vec &operator|=(Vec<1, U> v) noexcept
+	constexpr Vec& operator|=(Vec<1, U> v) noexcept
 	{
 		x |= static_cast<T>(v.x);
 		return *this;
 	}
 
 	template <class U>
-	constexpr Vec &operator^=(U value) noexcept
+	constexpr Vec& operator^=(U value) noexcept
 	{
 		x ^= static_cast<T>(value);
 		return *this;
 	}
 
 	template <class U>
-	constexpr Vec &operator^=(Vec<1, U> v) noexcept
+	constexpr Vec& operator^=(Vec<1, U> v) noexcept
 	{
 		x ^= static_cast<T>(v.x);
 		return *this;
 	}
 
 	template <class U>
-	constexpr Vec &operator<<=(U value) noexcept
+	constexpr Vec& operator<<=(U value) noexcept
 	{
 		x <<= static_cast<T>(value);
 		return *this;
 	}
 
 	template <class U>
-	constexpr Vec &operator<<=(Vec<1, U> v) noexcept
+	constexpr Vec& operator<<=(Vec<1, U> v) noexcept
 	{
 		x <<= static_cast<T>(v.x);
 		return *this;
 	}
 
 	template <class U>
-	constexpr Vec &operator>>=(U value) noexcept
+	constexpr Vec& operator>>=(U value) noexcept
 	{
 		x >>= static_cast<T>(value);
 		return *this;
 	}
 
 	template <class U>
-	constexpr Vec &operator>>=(Vec<1, U> v) noexcept
+	constexpr Vec& operator>>=(Vec<1, U> v) noexcept
 	{
 		x >>= static_cast<T>(v.x);
 		return *this;
@@ -297,7 +297,7 @@ struct Vec<1, T> {
 	|                                                                                     |
 	**************************************************************************************/
 
-	void swap(Vec &other) noexcept { std::swap(x, other.x); }
+	void swap(Vec& other) noexcept { std::swap(x, other.x); }
 };
 
 /**************************************************************************************

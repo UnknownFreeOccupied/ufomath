@@ -71,8 +71,8 @@ struct Vec<4, T> {
 	|                                                                                     |
 	**************************************************************************************/
 
-	constexpr Vec() noexcept            = default;
-	constexpr Vec(Vec const &) noexcept = default;
+	constexpr Vec() noexcept           = default;
+	constexpr Vec(Vec const&) noexcept = default;
 
 	constexpr explicit Vec(T value) noexcept : x(value), y(value), z(value), w(value) {}
 
@@ -390,10 +390,10 @@ struct Vec<4, T> {
 	|                                                                                     |
 	**************************************************************************************/
 
-	constexpr Vec &operator=(Vec const &) noexcept = default;
+	constexpr Vec& operator=(Vec const&) noexcept = default;
 
 	template <class U>
-	constexpr Vec &operator=(Vec<4, U> rhs) noexcept
+	constexpr Vec& operator=(Vec<4, U> rhs) noexcept
 	{
 		x = static_cast<T>(rhs.x);
 		y = static_cast<T>(rhs.y);
@@ -408,7 +408,7 @@ struct Vec<4, T> {
 	|                                                                                     |
 	**************************************************************************************/
 
-	[[nodiscard]] constexpr T &operator[](size_type pos) noexcept
+	[[nodiscard]] constexpr T& operator[](size_type pos) noexcept
 	{
 		assert(size() > pos);
 		return (&x)[pos];
@@ -439,7 +439,7 @@ struct Vec<4, T> {
 	**************************************************************************************/
 
 	template <class U>
-	constexpr Vec &operator+=(U value) noexcept
+	constexpr Vec& operator+=(U value) noexcept
 	{
 		x += static_cast<T>(value);
 		y += static_cast<T>(value);
@@ -449,7 +449,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator+=(Vec<1, U> v) noexcept
+	constexpr Vec& operator+=(Vec<1, U> v) noexcept
 	{
 		x += static_cast<T>(v.x);
 		y += static_cast<T>(v.x);
@@ -459,7 +459,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator+=(Vec<4, U> v) noexcept
+	constexpr Vec& operator+=(Vec<4, U> v) noexcept
 	{
 		x += static_cast<T>(v.x);
 		y += static_cast<T>(v.y);
@@ -469,7 +469,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator-=(U value) noexcept
+	constexpr Vec& operator-=(U value) noexcept
 	{
 		x -= static_cast<T>(value);
 		y -= static_cast<T>(value);
@@ -479,7 +479,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator-=(Vec<1, U> v) noexcept
+	constexpr Vec& operator-=(Vec<1, U> v) noexcept
 	{
 		x -= static_cast<T>(v.x);
 		y -= static_cast<T>(v.x);
@@ -489,7 +489,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator-=(Vec<4, U> v) noexcept
+	constexpr Vec& operator-=(Vec<4, U> v) noexcept
 	{
 		x -= static_cast<T>(v.x);
 		y -= static_cast<T>(v.y);
@@ -499,7 +499,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator*=(U value) noexcept
+	constexpr Vec& operator*=(U value) noexcept
 	{
 		x *= static_cast<T>(value);
 		y *= static_cast<T>(value);
@@ -509,7 +509,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator*=(Vec<1, U> v) noexcept
+	constexpr Vec& operator*=(Vec<1, U> v) noexcept
 	{
 		x *= static_cast<T>(v.x);
 		y *= static_cast<T>(v.x);
@@ -519,7 +519,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator*=(Vec<4, U> v) noexcept
+	constexpr Vec& operator*=(Vec<4, U> v) noexcept
 	{
 		x *= static_cast<T>(v.x);
 		y *= static_cast<T>(v.y);
@@ -529,7 +529,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator/=(U value) noexcept
+	constexpr Vec& operator/=(U value) noexcept
 	{
 		x /= static_cast<T>(value);
 		y /= static_cast<T>(value);
@@ -539,7 +539,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator/=(Vec<1, U> v) noexcept
+	constexpr Vec& operator/=(Vec<1, U> v) noexcept
 	{
 		x /= static_cast<T>(v.x);
 		y /= static_cast<T>(v.x);
@@ -549,7 +549,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator/=(Vec<4, U> v) noexcept
+	constexpr Vec& operator/=(Vec<4, U> v) noexcept
 	{
 		x /= static_cast<T>(v.x);
 		y /= static_cast<T>(v.y);
@@ -559,7 +559,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator%=(U value) noexcept
+	constexpr Vec& operator%=(U value) noexcept
 	{
 		x %= static_cast<T>(value);
 		y %= static_cast<T>(value);
@@ -569,7 +569,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator%=(Vec<1, U> v) noexcept
+	constexpr Vec& operator%=(Vec<1, U> v) noexcept
 	{
 		x %= static_cast<T>(v.x);
 		y %= static_cast<T>(v.x);
@@ -579,7 +579,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator%=(Vec<4, U> v) noexcept
+	constexpr Vec& operator%=(Vec<4, U> v) noexcept
 	{
 		x %= static_cast<T>(v.x);
 		y %= static_cast<T>(v.y);
@@ -589,7 +589,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator&=(U value) noexcept
+	constexpr Vec& operator&=(U value) noexcept
 	{
 		x &= static_cast<T>(value);
 		y &= static_cast<T>(value);
@@ -599,7 +599,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator&=(Vec<1, U> v) noexcept
+	constexpr Vec& operator&=(Vec<1, U> v) noexcept
 	{
 		x &= static_cast<T>(v.x);
 		y &= static_cast<T>(v.x);
@@ -609,7 +609,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator&=(Vec<4, U> v) noexcept
+	constexpr Vec& operator&=(Vec<4, U> v) noexcept
 	{
 		x &= static_cast<T>(v.x);
 		y &= static_cast<T>(v.y);
@@ -619,7 +619,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator|=(U value) noexcept
+	constexpr Vec& operator|=(U value) noexcept
 	{
 		x |= static_cast<T>(value);
 		y |= static_cast<T>(value);
@@ -629,7 +629,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator|=(Vec<1, U> v) noexcept
+	constexpr Vec& operator|=(Vec<1, U> v) noexcept
 	{
 		x |= static_cast<T>(v.x);
 		y |= static_cast<T>(v.x);
@@ -639,7 +639,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator|=(Vec<4, U> v) noexcept
+	constexpr Vec& operator|=(Vec<4, U> v) noexcept
 	{
 		x |= static_cast<T>(v.x);
 		y |= static_cast<T>(v.y);
@@ -649,7 +649,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator^=(U value) noexcept
+	constexpr Vec& operator^=(U value) noexcept
 	{
 		x ^= static_cast<T>(value);
 		y ^= static_cast<T>(value);
@@ -659,7 +659,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator^=(Vec<1, U> v) noexcept
+	constexpr Vec& operator^=(Vec<1, U> v) noexcept
 	{
 		x ^= static_cast<T>(v.x);
 		y ^= static_cast<T>(v.x);
@@ -669,7 +669,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator^=(Vec<4, U> v) noexcept
+	constexpr Vec& operator^=(Vec<4, U> v) noexcept
 	{
 		x ^= static_cast<T>(v.x);
 		y ^= static_cast<T>(v.y);
@@ -679,7 +679,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator<<=(U value) noexcept
+	constexpr Vec& operator<<=(U value) noexcept
 	{
 		x <<= static_cast<T>(value);
 		y <<= static_cast<T>(value);
@@ -689,7 +689,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator<<=(Vec<1, U> v) noexcept
+	constexpr Vec& operator<<=(Vec<1, U> v) noexcept
 	{
 		x <<= static_cast<T>(v.x);
 		y <<= static_cast<T>(v.x);
@@ -699,7 +699,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator<<=(Vec<4, U> v) noexcept
+	constexpr Vec& operator<<=(Vec<4, U> v) noexcept
 	{
 		x <<= static_cast<T>(v.x);
 		y <<= static_cast<T>(v.y);
@@ -709,7 +709,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator>>=(U value) noexcept
+	constexpr Vec& operator>>=(U value) noexcept
 	{
 		x >>= static_cast<T>(value);
 		y >>= static_cast<T>(value);
@@ -719,7 +719,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator>>=(Vec<1, U> v) noexcept
+	constexpr Vec& operator>>=(Vec<1, U> v) noexcept
 	{
 		x >>= static_cast<T>(v.x);
 		y >>= static_cast<T>(v.x);
@@ -729,7 +729,7 @@ struct Vec<4, T> {
 	}
 
 	template <class U>
-	constexpr Vec &operator>>=(Vec<4, U> v) noexcept
+	constexpr Vec& operator>>=(Vec<4, U> v) noexcept
 	{
 		x >>= static_cast<T>(v.x);
 		y >>= static_cast<T>(v.y);
@@ -752,7 +752,7 @@ struct Vec<4, T> {
 	|                                                                                     |
 	**************************************************************************************/
 
-	void swap(Vec &other) noexcept
+	void swap(Vec& other) noexcept
 	{
 		std::swap(x, other.x);
 		std::swap(y, other.y);

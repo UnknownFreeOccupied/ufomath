@@ -58,7 +58,7 @@ namespace ufo::numbers
 namespace detail
 {
 template <class T>
-inline constexpr bool False = false;
+constexpr inline bool False = false;
 
 template <class T>
 struct IllFormed {
@@ -69,111 +69,111 @@ struct IllFormed {
 };  // namespace detail
 
 template <class T, class Enable = void>
-inline constexpr T e_v = detail::IllFormed<T>{};
+constexpr inline T e_v = detail::IllFormed<T>{};
 
 template <class T, class Enable = void>
-inline constexpr T log2e_v = detail::IllFormed<T>{};
+constexpr inline T log2e_v = detail::IllFormed<T>{};
 
 template <class T, class Enable = void>
-inline constexpr T log10e_v = detail::IllFormed<T>{};
+constexpr inline T log10e_v = detail::IllFormed<T>{};
 
 template <class T, class Enable = void>
-inline constexpr T pi_v = detail::IllFormed<T>{};
+constexpr inline T pi_v = detail::IllFormed<T>{};
 
 template <class T, class Enable = void>
-inline constexpr T inv_pi_v = detail::IllFormed<T>{};
+constexpr inline T inv_pi_v = detail::IllFormed<T>{};
 
 template <class T, class Enable = void>
-inline constexpr T inv_sqrtpi_v = detail::IllFormed<T>{};
+constexpr inline T inv_sqrtpi_v = detail::IllFormed<T>{};
 
 template <class T, class Enable = void>
-inline constexpr T ln2_v = detail::IllFormed<T>{};
+constexpr inline T ln2_v = detail::IllFormed<T>{};
 
 template <class T, class Enable = void>
-inline constexpr T ln10_v = detail::IllFormed<T>{};
+constexpr inline T ln10_v = detail::IllFormed<T>{};
 
 template <class T, class Enable = void>
-inline constexpr T sqrt2_v = detail::IllFormed<T>{};
+constexpr inline T sqrt2_v = detail::IllFormed<T>{};
 
 template <class T, class Enable = void>
-inline constexpr T sqrt3_v = detail::IllFormed<T>{};
+constexpr inline T sqrt3_v = detail::IllFormed<T>{};
 
 template <class T, class Enable = void>
-inline constexpr T inv_sqrt3_v = detail::IllFormed<T>{};
+constexpr inline T inv_sqrt3_v = detail::IllFormed<T>{};
 
 template <class T, class Enable = void>
-inline constexpr T egamma_v = detail::IllFormed<T>{};
+constexpr inline T egamma_v = detail::IllFormed<T>{};
 
 template <class T, class Enable = void>
-inline constexpr T phi_v = detail::IllFormed<T>{};
+constexpr inline T phi_v = detail::IllFormed<T>{};
 
 template <class T>
-inline constexpr T e_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
+constexpr inline T e_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
     2.718281828459045235360287471352662;
 
 template <class T>
-inline constexpr T log2e_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
+constexpr inline T log2e_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
     1.442695040888963407359924681001892;
 
 template <class T>
-inline constexpr T log10e_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
+constexpr inline T log10e_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
     0.434294481903251827651128918916605;
 
 template <class T>
-inline constexpr T pi_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
+constexpr inline T pi_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
     3.141592653589793238462643383279502;
 
 template <class T>
-inline constexpr T inv_pi_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
+constexpr inline T inv_pi_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
     0.318309886183790671537767526745028;
 
 template <class T>
-inline constexpr T
+constexpr inline T
     inv_sqrtpi_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
         0.564189583547756286948079451560772;
 
 template <class T>
-inline constexpr T ln2_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
+constexpr inline T ln2_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
     0.693147180559945309417232121458176;
 
 template <class T>
-inline constexpr T ln10_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
+constexpr inline T ln10_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
     2.302585092994045684017991454684364;
 
 template <class T>
-inline constexpr T sqrt2_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
+constexpr inline T sqrt2_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
     1.414213562373095048801688724209698;
 
 template <class T>
-inline constexpr T sqrt3_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
+constexpr inline T sqrt3_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
     1.732050807568877293527446341505872;
 
 template <class T>
-inline constexpr T
+constexpr inline T
     inv_sqrt3_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
         0.577350269189625764509148780501957;
 
 template <class T>
-inline constexpr T egamma_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
+constexpr inline T egamma_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
     0.577215664901532860606512090082402;
 
 template <class T>
-inline constexpr T phi_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
+constexpr inline T phi_v<T, typename std::enable_if_t<std::is_floating_point_v<T>>> =
     1.618033988749894848204586834365638;
 
-inline constexpr double e          = e_v<double>;
-inline constexpr double log2e      = log2e_v<double>;
-inline constexpr double log10e     = log10e_v<double>;
-inline constexpr double pi         = pi_v<double>;
-inline constexpr double inv_pi     = inv_pi_v<double>;
-inline constexpr double inv_sqrtpi = inv_sqrtpi_v<double>;
-inline constexpr double ln2        = ln2_v<double>;
-inline constexpr double ln10       = ln10_v<double>;
-inline constexpr double sqrt2      = sqrt2_v<double>;
-inline constexpr double sqrt3      = sqrt3_v<double>;
-inline constexpr double inv_sqrt3  = inv_sqrt3_v<double>;
-inline constexpr double egamma     = egamma_v<double>;
-inline constexpr double phi        = phi_v<double>;
+constexpr inline double e          = e_v<double>;
+constexpr inline double log2e      = log2e_v<double>;
+constexpr inline double log10e     = log10e_v<double>;
+constexpr inline double pi         = pi_v<double>;
+constexpr inline double inv_pi     = inv_pi_v<double>;
+constexpr inline double inv_sqrtpi = inv_sqrtpi_v<double>;
+constexpr inline double ln2        = ln2_v<double>;
+constexpr inline double ln10       = ln10_v<double>;
+constexpr inline double sqrt2      = sqrt2_v<double>;
+constexpr inline double sqrt3      = sqrt3_v<double>;
+constexpr inline double inv_sqrt3  = inv_sqrt3_v<double>;
+constexpr inline double egamma     = egamma_v<double>;
+constexpr inline double phi        = phi_v<double>;
 }  // namespace ufo::numbers
 #endif
 

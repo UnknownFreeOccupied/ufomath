@@ -72,11 +72,11 @@ struct Quat {
 	|                                                                                     |
 	**************************************************************************************/
 
-	constexpr Quat() noexcept             = default;
-	constexpr Quat(Quat const &) noexcept = default;
+	constexpr Quat() noexcept            = default;
+	constexpr Quat(Quat const&) noexcept = default;
 
 	template <class U>
-	constexpr Quat(Quat<U> const &q) noexcept
+	constexpr Quat(Quat<U> const& q) noexcept
 	    : w(static_cast<T>(q.w))
 	    , x(static_cast<T>(q.x))
 	    , y(static_cast<T>(q.y))
@@ -86,9 +86,9 @@ struct Quat {
 
 	constexpr Quat(T w, T x, T y, T z) noexcept : w(w), x(x), y(y), z(z) {}
 
-	constexpr Quat(T s, Vec3<T> const &v) noexcept : Quat(s, v.x, v.y, v.z) {}
+	constexpr Quat(T s, Vec3<T> const& v) noexcept : Quat(s, v.x, v.y, v.z) {}
 
-	Quat(Vec<3, T> const &u, Vec<3, T> const &v)
+	Quat(Vec<3, T> const& u, Vec<3, T> const& v)
 	{
 		// Taken straight from GLM
 
@@ -114,7 +114,7 @@ struct Quat {
 	// Build a quaternion from euler angles (pitch, yaw, roll (in whatever order you
 	// believe, try multiple times)), in radians.
 	// NOTE: This seems to be the same as setRPY from ROS 2
-	explicit Quat(Vec<3, T> const &euler_angles)
+	explicit Quat(Vec<3, T> const& euler_angles)
 	{
 		// Taken straight from GLM
 
@@ -127,14 +127,14 @@ struct Quat {
 		z = c.x * c.y * s.z - s.x * s.y * c.z;
 	}
 
-	constexpr Quat(Mat3x3<T> const &m) noexcept
+	constexpr Quat(Mat3x3<T> const& m) noexcept
 	{
 		// Taken from ROS 2 geometry2 but changed to wxyz, hopefully correct
 
 		T trace = m[0][0] + m[1][1] + m[2][2];
 
 		// So we can treat w, x, y, z as an array
-		T *q = &w;
+		T* q = &w;
 
 		if (trace > T(0.0)) {
 			T s  = std::sqrt(trace + T(1.0));
@@ -160,7 +160,7 @@ struct Quat {
 		}
 	}
 
-	constexpr Quat(Mat4x4<T> const &m) noexcept : Quat(Mat3x3<T>(m)) {}
+	constexpr Quat(Mat4x4<T> const& m) noexcept : Quat(Mat3x3<T>(m)) {}
 
 	/**************************************************************************************
 	|                                                                                     |
@@ -168,10 +168,10 @@ struct Quat {
 	|                                                                                     |
 	**************************************************************************************/
 
-	constexpr Quat &operator=(Quat const &) noexcept = default;
+	constexpr Quat& operator=(Quat const&) noexcept = default;
 
 	template <class U>
-	constexpr Quat &operator=(Quat<U> const &rhs) noexcept
+	constexpr Quat& operator=(Quat<U> const& rhs) noexcept
 	{
 		w = static_cast<T>(rhs.w);
 		x = static_cast<T>(rhs.x);
@@ -226,7 +226,7 @@ struct Quat {
 	|                                                                                     |
 	**************************************************************************************/
 
-	[[nodiscard]] constexpr T &operator[](size_type pos) noexcept
+	[[nodiscard]] constexpr T& operator[](size_type pos) noexcept
 	{
 		assert(size() > pos);
 		return (&x)[pos];
@@ -245,7 +245,7 @@ struct Quat {
 	**************************************************************************************/
 
 	template <class U>
-	Quat<T> &operator+=(Quat<U> const &q)
+	Quat<T>& operator+=(Quat<U> const& q)
 	{
 		w += q.w;
 		x += q.x;
@@ -255,7 +255,7 @@ struct Quat {
 	}
 
 	template <class U>
-	Quat<T> &operator-=(Quat<U> const &q)
+	Quat<T>& operator-=(Quat<U> const& q)
 	{
 		w -= q.w;
 		x -= q.x;
@@ -265,7 +265,7 @@ struct Quat {
 	}
 
 	template <class U>
-	Quat<T> &operator*=(Quat<U> const &q)
+	Quat<T>& operator*=(Quat<U> const& q)
 	{
 		Quat<T> const p(*this);
 		Quat<T> const qt(q);
@@ -279,7 +279,7 @@ struct Quat {
 	}
 
 	template <class U>
-	Quat<T> &operator*=(U s)
+	Quat<T>& operator*=(U s)
 	{
 		w *= s;
 		x *= s;
@@ -289,7 +289,7 @@ struct Quat {
 	}
 
 	template <class U>
-	Quat<T> &operator/=(U s)
+	Quat<T>& operator/=(U s)
 	{
 		w /= s;
 		x /= s;
@@ -312,7 +312,7 @@ struct Quat {
 	|                                                                                     |
 	**************************************************************************************/
 
-	void swap(Quat &other) noexcept
+	void swap(Quat& other) noexcept
 	{
 		std::swap(x, other.x);
 		std::swap(y, other.y);
@@ -328,13 +328,13 @@ struct Quat {
 **************************************************************************************/
 
 template <class T>
-Quat<T> operator+(Quat<T> const &q)
+Quat<T> operator+(Quat<T> const& q)
 {
 	return q;
 }
 
 template <class T>
-Quat<T> operator-(Quat<T> const &q)
+Quat<T> operator-(Quat<T> const& q)
 {
 	return Quat<T>(-q.w, -q.x, -q.y, -q.z);
 }
@@ -346,25 +346,25 @@ Quat<T> operator-(Quat<T> const &q)
 **************************************************************************************/
 
 template <class T>
-Quat<T> operator+(Quat<T> const &q, Quat<T> const &p)
+Quat<T> operator+(Quat<T> const& q, Quat<T> const& p)
 {
 	return Quat<T>(q) += p;
 }
 
 template <class T>
-Quat<T> operator-(Quat<T> const &q, Quat<T> const &p)
+Quat<T> operator-(Quat<T> const& q, Quat<T> const& p)
 {
 	return Quat<T>(q) -= p;
 }
 
 template <class T>
-Quat<T> operator*(Quat<T> const &q, Quat<T> const &p)
+Quat<T> operator*(Quat<T> const& q, Quat<T> const& p)
 {
 	return Quat<T>(q) *= p;
 }
 
 template <class T>
-Vec<3, T> operator*(Quat<T> const &q, Vec<3, T> const &v)
+Vec<3, T> operator*(Quat<T> const& q, Vec<3, T> const& v)
 {
 	Vec<3, T> const quat_vector(q.x, q.y, q.z);
 	Vec<3, T> const uv(cross(quat_vector, v));
@@ -374,37 +374,37 @@ Vec<3, T> operator*(Quat<T> const &q, Vec<3, T> const &v)
 }
 
 template <class T>
-Vec<3, T> operator*(Vec<3, T> const &v, Quat<T> const &q)
+Vec<3, T> operator*(Vec<3, T> const& v, Quat<T> const& q)
 {
 	return inverse(q) * v;
 }
 
 template <class T>
-Vec<4, T> operator*(Quat<T> const &q, Vec<4, T> const &v)
+Vec<4, T> operator*(Quat<T> const& q, Vec<4, T> const& v)
 {
 	return Vec<4, T>(q * Vec<3, T>(v), v.w);
 }
 
 template <class T>
-Vec<4, T> operator*(Vec<4, T> const &v, Quat<T> const &q)
+Vec<4, T> operator*(Vec<4, T> const& v, Quat<T> const& q)
 {
 	return inverse(q) * v;
 }
 
 template <class T>
-Quat<T> operator*(Quat<T> const &q, T const &s)
+Quat<T> operator*(Quat<T> const& q, T const& s)
 {
 	return Quat<T>(q.w * s, q.x * s, q.y * s, q.z * s);
 }
 
 template <class T>
-Quat<T> operator*(T const &s, Quat<T> const &q)
+Quat<T> operator*(T const& s, Quat<T> const& q)
 {
 	return q * s;
 }
 
 template <class T>
-Quat<T> operator/(Quat<T> const &q, T const &s)
+Quat<T> operator/(Quat<T> const& q, T const& s)
 {
 	return Quat<T>(q.w / s, q.x / s, q.y / s, q.z / s);
 }
@@ -416,13 +416,13 @@ Quat<T> operator/(Quat<T> const &q, T const &s)
 **************************************************************************************/
 
 template <class T>
-[[nodiscard]] constexpr bool operator==(Quat<T> const &lhs, Quat<T> const &rhs) noexcept
+[[nodiscard]] constexpr bool operator==(Quat<T> const& lhs, Quat<T> const& rhs) noexcept
 {
 	return lhs.w == rhs.w && lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z;
 }
 
 template <class T>
-[[nodiscard]] constexpr bool operator!=(Quat<T> const &lhs, Quat<T> const &rhs) noexcept
+[[nodiscard]] constexpr bool operator!=(Quat<T> const& lhs, Quat<T> const& rhs) noexcept
 {
 	return !(lhs == rhs);
 }
@@ -434,13 +434,13 @@ template <class T>
 **************************************************************************************/
 
 template <class T>
-void swap(Quat<T> &lhs, Quat<T> &rhs) noexcept
+void swap(Quat<T>& lhs, Quat<T>& rhs) noexcept
 {
 	lhs.swap(rhs);
 }
 
 template <class T>
-std::ostream &operator<<(std::ostream &out, Quat<T> const &q)
+std::ostream& operator<<(std::ostream& out, Quat<T> const& q)
 {
 	return out << "qw: " << q.w << " qx: " << q.x << " qy: " << q.y << " qz: " << q.z;
 }
