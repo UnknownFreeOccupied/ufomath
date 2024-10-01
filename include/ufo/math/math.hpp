@@ -51,7 +51,7 @@
 namespace ufo
 {
 template <class T>
-[[nodiscard]] constexpr int sgn(T val) noexcept
+[[nodiscard]] constexpr int sign(T val) noexcept
 {
 	if constexpr (std::is_unsigned_v<T>) {
 		return T(0) < val;
@@ -75,11 +75,29 @@ template <class T>
 template <class T>
 [[nodiscard]] constexpr T ipow(T base, int exp)
 {
-	T result = static_cast<T>(sgn(base));
+	T result = static_cast<T>(sign(base));
 	for (int e = 0 <= exp ? exp : -exp; 0 != e; --e) {
 		result *= base;
 	}
 	return 0 <= exp ? result : T(1) / result;
+}
+
+template <class T>
+[[nodiscard]] constexpr T mix(T const& x, T const& y, T const& a)
+{
+	return x * (T(1) - a) + y * a;
+}
+
+template <class T>
+[[nodiscard]] constexpr T mix(T const& x, T const& y, bool const& a)
+{
+	return a ? y : x;
+}
+
+template <class T>
+[[nodiscard]] constexpr T lerp(T const& x, T const& y, T const& a)
+{
+	return mix(x, y, a);
 }
 }  // namespace ufo
 
