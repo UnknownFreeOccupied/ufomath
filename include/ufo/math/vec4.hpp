@@ -393,7 +393,7 @@ struct Vec<4, T> {
 	constexpr Vec& operator=(Vec const&) noexcept = default;
 
 	template <class U>
-	constexpr Vec& operator=(Vec<4, U> rhs) noexcept
+	constexpr Vec& operator=(Vec<4, U> const& rhs) noexcept
 	{
 		x = static_cast<T>(rhs.x);
 		y = static_cast<T>(rhs.y);
@@ -794,7 +794,7 @@ template <class T>
 template <class T>
 [[nodiscard]] constexpr Vec<4, T> operator+(Vec<4, T> v1, Vec<4, T> v2) noexcept
 {
-	return {v1.x + v2.x, v1.y + v2.y, v1.x + v2.z, v1.w + v2.w};
+	return {v1.x + v2.x, v1.y + v2.y, v1.z + v2.z, v1.w + v2.w};
 }
 
 template <class T>
