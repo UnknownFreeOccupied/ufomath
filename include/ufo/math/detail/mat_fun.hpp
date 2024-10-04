@@ -215,13 +215,51 @@ template <std::size_t Cols, std::size_t Rows, class T>
 template <class T>
 [[nodiscard]] Mat<4, 4, T> orthogonal(T left, T right, T bottom, T top)
 {
-	// TODO: Implement
+	Mat<4, 4, T> m(T(1));
+	m[0][0] = T(2) / (right - left);
+	m[1][1] = T(2) / (top - bottom);
+	m[2][2] = -T(1);
+	m[3][0] = -(right + left) / (right - left);
+	m[3][1] = -(top + bottom) / (top - bottom);
+	return m;
 }
 
 template <class T, bool RightHanded = true, bool ZeroToOne = true>
 [[nodiscard]] Mat<4, 4, T> orthogonal(T left, T right, T bottom, T top, T zNear, T zFar)
 {
-	// TODO: Implement
+	Mat<4, 4, T> m(1);
+
+	if constexpr (RightHanded && ZeroToOne) {
+		m[0][0] = T(2) / (right - left);
+		m[1][1] = T(2) / (top - bottom);
+		m[2][2] = -T(1) / (zFar - zNear);
+		m[3][0] = -(right + left) / (right - left);
+		m[3][1] = -(top + bottom) / (top - bottom);
+		m[3][2] = -zNear / (zFar - zNear);
+	} else if constexpr (RightHanded && !ZeroToOne) {
+		m[0][0] = T(2) / (right - left);
+		m[1][1] = T(2) / (top - bottom);
+		m[2][2] = -T(2) / (zFar - zNear);
+		m[3][0] = -(right + left) / (right - left);
+		m[3][1] = -(top + bottom) / (top - bottom);
+		m[3][2] = -(zFar + zNear) / (zFar - zNear);
+	} else if constexpr (!RightHanded && ZeroToOne) {
+		m[0][0] = T(2) / (right - left);
+		m[1][1] = T(2) / (top - bottom);
+		m[2][2] = T(1) / (zFar - zNear);
+		m[3][0] = -(right + left) / (right - left);
+		m[3][1] = -(top + bottom) / (top - bottom);
+		m[3][2] = -zNear / (zFar - zNear);
+	} else if constexpr (!RightHanded && !ZeroToOne) {
+		m[0][0] = T(2) / (right - left);
+		m[1][1] = T(2) / (top - bottom);
+		m[2][2] = T(2) / (zFar - zNear);
+		m[3][0] = -(right + left) / (right - left);
+		m[3][1] = -(top + bottom) / (top - bottom);
+		m[3][2] = -(zFar + zNear) / (zFar - zNear);
+	}
+
+	return m;
 }
 
 template <class T, bool RightHanded = true, bool ZeroToOne = true>
