@@ -46,6 +46,7 @@
 #include <ufo/math/detail/quat.hpp>
 #include <ufo/math/detail/vec.hpp>
 // We need this here because of Vec<4, bool>
+#include <ufo/math/mat.hpp>
 #include <ufo/math/vec4.hpp>
 
 // STL
