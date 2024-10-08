@@ -834,39 +834,17 @@ template <class T>
 **************************************************************************************/
 
 template <class T>
-[[nodiscard]] constexpr Vec<3, bool> operator==(Vec<3, T> lhs, Vec<3, T> rhs) noexcept
+[[nodiscard]] constexpr bool operator==(Vec<3, T> const& lhs,
+                                        Vec<3, T> const& rhs) noexcept
 {
-	return {lhs.x == rhs.x, lhs.y == rhs.y, lhs.z == rhs.z};
+	return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z;
 }
 
 template <class T>
-[[nodiscard]] constexpr Vec<3, bool> operator!=(Vec<3, T> lhs, Vec<3, T> rhs) noexcept
+[[nodiscard]] constexpr bool operator!=(Vec<3, T> const& lhs,
+                                        Vec<3, T> const& rhs) noexcept
 {
-	return {lhs.x != rhs.x, lhs.y != rhs.y, lhs.z != rhs.z};
-}
-
-template <class T>
-[[nodiscard]] constexpr Vec<3, bool> operator<(Vec<3, T> lhs, Vec<3, T> rhs) noexcept
-{
-	return {lhs.x < rhs.x, lhs.y < rhs.y, lhs.z < rhs.z};
-}
-
-template <class T>
-[[nodiscard]] constexpr Vec<3, bool> operator<=(Vec<3, T> lhs, Vec<3, T> rhs) noexcept
-{
-	return {lhs.x <= rhs.x, lhs.y <= rhs.y, lhs.z <= rhs.z};
-}
-
-template <class T>
-[[nodiscard]] constexpr Vec<3, bool> operator>(Vec<3, T> lhs, Vec<3, T> rhs) noexcept
-{
-	return {lhs.x > rhs.x, lhs.y > rhs.y, lhs.z > rhs.z};
-}
-
-template <class T>
-[[nodiscard]] constexpr Vec<3, bool> operator>=(Vec<3, T> lhs, Vec<3, T> rhs) noexcept
-{
-	return {lhs.x >= rhs.x, lhs.y >= rhs.y, lhs.z >= rhs.z};
+	return lhs.x != rhs.x || lhs.y != rhs.y || lhs.z != rhs.z;
 }
 }  // namespace ufo
 

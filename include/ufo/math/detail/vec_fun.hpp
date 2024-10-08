@@ -337,18 +337,72 @@ template <std::size_t Dim, class T>
 }
 
 template <std::size_t Dim, class T>
-[[nodiscard]] constexpr bool equal(Vec<Dim, T> v1, Vec<Dim, T> v2)
+[[nodiscard]] constexpr Vec<Dim, bool> equal(Vec<Dim, T> const& v1, Vec<Dim, T> const& v2)
 {
+	Vec<Dim, bool> res;
 	for (std::size_t i{}; Dim > i; ++i) {
-		if (v1[i] != v2[i]) {
-			return false;
-		}
+		res[i] = v1[i] == v2[i];
 	}
-	return true;
+	return res;
+}
+
+template <std::size_t Dim, class T>
+[[nodiscard]] constexpr Vec<Dim, bool> notEqual(Vec<Dim, T> const& v1,
+                                                Vec<Dim, T> const& v2)
+{
+	Vec<Dim, bool> res;
+	for (std::size_t i{}; Dim > i; ++i) {
+		res[i] = v1[i] != v2[i];
+	}
+	return res;
+}
+
+template <std::size_t Dim, class T>
+[[nodiscard]] constexpr Vec<Dim, bool> lessThan(Vec<Dim, T> const& v1,
+                                                Vec<Dim, T> const& v2)
+{
+	Vec<Dim, bool> res;
+	for (std::size_t i{}; Dim > i; ++i) {
+		res[i] = v1[i] < v2[i];
+	}
+	return res;
+}
+
+template <std::size_t Dim, class T>
+[[nodiscard]] constexpr Vec<Dim, bool> lessThanEqual(Vec<Dim, T> const& v1,
+                                                     Vec<Dim, T> const& v2)
+{
+	Vec<Dim, bool> res;
+	for (std::size_t i{}; Dim > i; ++i) {
+		res[i] = v1[i] <= v2[i];
+	}
+	return res;
+}
+
+template <std::size_t Dim, class T>
+[[nodiscard]] constexpr Vec<Dim, bool> greaterThan(Vec<Dim, T> const& v1,
+                                                   Vec<Dim, T> const& v2)
+{
+	Vec<Dim, bool> res;
+	for (std::size_t i{}; Dim > i; ++i) {
+		res[i] = v1[i] > v2[i];
+	}
+	return res;
+}
+
+template <std::size_t Dim, class T>
+[[nodiscard]] constexpr Vec<Dim, bool> greaterThanEqual(Vec<Dim, T> const& v1,
+                                                        Vec<Dim, T> const& v2)
+{
+	Vec<Dim, bool> res;
+	for (std::size_t i{}; Dim > i; ++i) {
+		res[i] = v1[i] >= v2[i];
+	}
+	return res;
 }
 
 template <std::size_t Dim>
-[[nodiscard]] constexpr bool all(Vec<Dim, bool> v)
+[[nodiscard]] constexpr bool all(Vec<Dim, bool> const& v)
 {
 	for (std::size_t i{}; Dim > i; ++i) {
 		if (!v[i]) {

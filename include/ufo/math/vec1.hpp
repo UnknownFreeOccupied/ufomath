@@ -503,39 +503,17 @@ template <class T>
 **************************************************************************************/
 
 template <class T>
-[[nodiscard]] constexpr Vec<1, bool> operator==(Vec<1, T> lhs, Vec<1, T> rhs) noexcept
+[[nodiscard]] constexpr bool operator==(Vec<1, T> const& lhs,
+                                        Vec<1, T> const& rhs) noexcept
 {
-	return {lhs.x == rhs.x};
+	return lhs.x == rhs.x;
 }
 
 template <class T>
-[[nodiscard]] constexpr Vec<1, bool> operator!=(Vec<1, T> lhs, Vec<1, T> rhs) noexcept
+[[nodiscard]] constexpr bool operator!=(Vec<1, T> const& lhs,
+                                        Vec<1, T> const& rhs) noexcept
 {
-	return {lhs.x != rhs.x};
-}
-
-template <class T>
-[[nodiscard]] constexpr Vec<1, bool> operator<(Vec<1, T> lhs, Vec<1, T> rhs) noexcept
-{
-	return {lhs.x < rhs.x};
-}
-
-template <class T>
-[[nodiscard]] constexpr Vec<1, bool> operator<=(Vec<1, T> lhs, Vec<1, T> rhs) noexcept
-{
-	return {lhs.x <= rhs.x};
-}
-
-template <class T>
-[[nodiscard]] constexpr Vec<1, bool> operator>(Vec<1, T> lhs, Vec<1, T> rhs) noexcept
-{
-	return {lhs.x > rhs.x};
-}
-
-template <class T>
-[[nodiscard]] constexpr Vec<1, bool> operator>=(Vec<1, T> lhs, Vec<1, T> rhs) noexcept
-{
-	return {lhs.x >= rhs.x};
+	return lhs.x != rhs.x;
 }
 }  // namespace ufo
 
