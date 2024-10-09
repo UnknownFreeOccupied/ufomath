@@ -382,6 +382,37 @@ template <class T, bool RightHanded = true>
 
 	return m;
 }
+
+template <class T>
+[[nodiscard]] Mat<4, 4, T> rotate(Mat<4, 4, T> const& m, T angle, Vec<3, T> const& v)
+{
+	T const a = angle;
+	T const c = std::cos(a);
+	T const s = std::sin(a);
+
+	Vec<3, T> axis(normalize(v));
+	Vec<3, T> temp((T(1) - c) * axis);
+
+	Mat<3, 3, T> rotate;
+	rotate[0][0] = c + temp[0] * axis[0];
+	rotate[0][1] = temp[0] * axis[1] + s * axis[2];
+	rotate[0][2] = temp[0] * axis[2] - s * axis[1];
+
+	rotate[1][0] = temp[1] * axis[0] - s * axis[2];
+	rotate[1][1] = c + temp[1] * axis[1];
+	rotate[1][2] = temp[1] * axis[2] + s * axis[0];
+
+	rotate[2][0] = temp[2] * axis[0] + s * axis[1];
+	rotate[2][1] = temp[2] * axis[1] - s * axis[0];
+	rotate[2][2] = c + temp[2] * axis[2];
+
+	Mat<4, 4, T> result;
+	result[0] = m[0] * rotate[0][0] + m[1] * rotate[0][1] + m[2] * rotate[0][2];
+	result[1] = m[0] * rotate[1][0] + m[1] * rotate[1][1] + m[2] * rotate[1][2];
+	result[2] = m[0] * rotate[2][0] + m[1] * rotate[2][1] + m[2] * rotate[2][2];
+	result[3] = m[3];
+	return result;
+}
 }  // namespace ufo
 
 #endif  // UFO_MATH_DETAIL_MAT_FUN_HPP
