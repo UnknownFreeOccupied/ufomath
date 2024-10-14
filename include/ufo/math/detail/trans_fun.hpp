@@ -115,7 +115,8 @@ void transInPlace(Trans<Dim, T> const& t, Range& range)
 
 template <
     class ExecutionPolicy, std::size_t Dim, class T, class RandomIt1, class RandomIt2,
-    std::enable_if_t<is_execution_policy_v<std::decay_t<ExecutionPolicy>>, bool> = true>
+    std::enable_if_t<execution::is_execution_policy_v<ExecutionPolicy>,
+                     bool> = true>
 RandomIt2 trans(ExecutionPolicy&& policy, Trans<Dim, T> const& t, RandomIt1 first,
                 RandomIt1 last, RandomIt2 d_first)
 {
@@ -157,7 +158,8 @@ RandomIt2 trans(ExecutionPolicy&& policy, Trans<Dim, T> const& t, RandomIt1 firs
 
 template <
     class ExecutionPolicy, std::size_t Dim, class T, class RandomIt,
-    std::enable_if_t<is_execution_policy_v<std::decay_t<ExecutionPolicy>>, bool> = true>
+    std::enable_if_t<execution::is_execution_policy_v<ExecutionPolicy>,
+                     bool> = true>
 auto trans(ExecutionPolicy&& policy, Trans<Dim, T> const& t, RandomIt first,
            RandomIt last)
 {
@@ -169,7 +171,8 @@ auto trans(ExecutionPolicy&& policy, Trans<Dim, T> const& t, RandomIt first,
 
 template <
     class ExecutionPolicy, std::size_t Dim, class T, class Range,
-    std::enable_if_t<is_execution_policy_v<std::decay_t<ExecutionPolicy>>, bool> = true>
+    std::enable_if_t<execution::is_execution_policy_v<ExecutionPolicy>,
+                     bool> = true>
 auto trans(ExecutionPolicy&& policy, Trans<Dim, T> const& t, Range& range)
 {
 	using std::begin;
@@ -179,7 +182,8 @@ auto trans(ExecutionPolicy&& policy, Trans<Dim, T> const& t, Range& range)
 
 template <
     class ExecutionPolicy, std::size_t Dim, class T, class RandomInOutIt,
-    std::enable_if_t<is_execution_policy_v<std::decay_t<ExecutionPolicy>>, bool> = true>
+    std::enable_if_t<execution::is_execution_policy_v<ExecutionPolicy>,
+                     bool> = true>
 RandomInOutIt transInPlace(ExecutionPolicy&& policy, Trans<Dim, T> const& t,
                            RandomInOutIt first, RandomInOutIt last)
 {
@@ -188,7 +192,8 @@ RandomInOutIt transInPlace(ExecutionPolicy&& policy, Trans<Dim, T> const& t,
 
 template <
     class ExecutionPolicy, std::size_t Dim, class T, class Range,
-    std::enable_if_t<is_execution_policy_v<std::decay_t<ExecutionPolicy>>, bool> = true>
+    std::enable_if_t<execution::is_execution_policy_v<ExecutionPolicy>,
+                     bool> = true>
 void transInPlace(ExecutionPolicy&& policy, Trans<Dim, T> const& t, Range& range)
 {
 	using std::begin;
