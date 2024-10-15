@@ -39,11 +39,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UFO_MATH_TRANS_HPP
-#define UFO_MATH_TRANS_HPP
+#ifndef UFO_MATH_DETAIL_TRANSFORM_HPP
+#define UFO_MATH_DETAIL_TRANSFORM_HPP
 
-// UFO
-#include <ufo/math/trans2.hpp>
-#include <ufo/math/trans3.hpp>
+// STL
+#include <cstddef>
 
-#endif  // UFO_MATH_TRANS_HPP
+namespace ufo
+{
+template <std::size_t Dim, class T = float>
+struct Transform;
+
+template <class T = float>
+using Transform2 = Transform<2, T>;
+template <class T = float>
+using Transform3 = Transform<3, T>;
+
+using Transform2f = Transform2<float>;
+using Transform2d = Transform2<double>;
+using Transform3f = Transform3<float>;
+using Transform3d = Transform3<double>;
+}  // namespace ufo
+
+#endif  // UFO_MATH_DETAIL_TRANSFORM_HPP

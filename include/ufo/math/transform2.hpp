@@ -39,12 +39,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UFO_MATH_TRANS2_HPP
-#define UFO_MATH_TRANS2_HPP
+#ifndef UFO_MATH_TRANSFORM2_HPP
+#define UFO_MATH_TRANSFORM2_HPP
 
 // UFO
-#include <ufo/math/detail/trans.hpp>
-#include <ufo/math/detail/trans_fun.hpp>
+#include <ufo/math/detail/transform.hpp>
+#include <ufo/math/detail/transform_fun.hpp>
 #include <ufo/math/mat2x2.hpp>
 #include <ufo/math/mat3x3.hpp>
 #include <ufo/math/vec2.hpp>
@@ -56,7 +56,7 @@
 namespace ufo
 {
 template <class T>
-struct Trans<2, T> {
+struct Transform<2, T> {
 	using value_type = T;
 	using size_type  = std::size_t;
 
@@ -69,29 +69,29 @@ struct Trans<2, T> {
 	|                                                                                     |
 	**************************************************************************************/
 
-	constexpr Trans() noexcept             = default;
-	constexpr Trans(Trans const&) noexcept = default;
+	constexpr Transform() noexcept                 = default;
+	constexpr Transform(Transform const&) noexcept = default;
 
-	constexpr Trans(Mat<2, 2, T> const& rotation, Vec<2, T> const& translation)
+	constexpr Transform(Mat<2, 2, T> const& rotation, Vec<2, T> const& translation)
 	    : rotation(rotation), translation(translation)
 	{
 	}
 
-	constexpr explicit Trans(Mat<2, 2, T> const& rotation) : rotation(rotation) {}
+	constexpr explicit Transform(Mat<2, 2, T> const& rotation) : rotation(rotation) {}
 
 	template <class T1, class T2>
-	constexpr Trans(Mat<2, 2, T1> const& rotation, Vec<2, T2> const& translation)
+	constexpr Transform(Mat<2, 2, T1> const& rotation, Vec<2, T2> const& translation)
 	    : rotation(rotation), translation(translation)
 	{
 	}
 
 	template <class U>
-	constexpr explicit Trans(Mat<2, 2, U> const& rotation) : rotation(rotation)
+	constexpr explicit Transform(Mat<2, 2, U> const& rotation) : rotation(rotation)
 	{
 	}
 
 	template <class T1, class T2>
-	constexpr Trans(T1 const& rotation, Vec<2, T2> const& translation)
+	constexpr Transform(T1 const& rotation, Vec<2, T2> const& translation)
 	    : translation(translation)
 	{
 		auto sin_rot   = std::sin(rotation);
@@ -100,7 +100,7 @@ struct Trans<2, T> {
 	}
 
 	template <class U>
-	constexpr explicit Trans(U const& rotation)
+	constexpr explicit Transform(U const& rotation)
 	{
 		auto sin_rot   = std::sin(rotation);
 		auto cos_rot   = std::cos(rotation);
@@ -108,13 +108,13 @@ struct Trans<2, T> {
 	}
 
 	template <class U>
-	constexpr explicit Trans(Mat<3, 3, U> const& m)
-	    : Trans(Mat<2, 2, U>(m), Vec<2, U>(m[2]))
+	constexpr explicit Transform(Mat<3, 3, U> const& m)
+	    : Transform(Mat<2, 2, U>(m), Vec<2, U>(m[2]))
 	{
 	}
 
 	template <class U>
-	constexpr explicit Trans(Trans<2, U> const& other) noexcept
+	constexpr explicit Transform(Transform<2, U> const& other) noexcept
 	    : rotation(other.rotation), translation(other.translation)
 	{
 	}
@@ -125,10 +125,10 @@ struct Trans<2, T> {
 	|                                                                                     |
 	**************************************************************************************/
 
-	constexpr Trans& operator=(Trans const&) noexcept = default;
+	constexpr Transform& operator=(Transform const&) noexcept = default;
 
 	template <class U>
-	constexpr Trans& operator=(Trans<2, U> const& rhs) noexcept
+	constexpr Transform& operator=(Transform<2, U> const& rhs) noexcept
 	{
 		rotation    = rhs.rotation;
 		translation = rhs.translation;
@@ -165,33 +165,33 @@ struct Trans<2, T> {
 	}
 
 	template <class U>
-	Trans& operator*=(Trans<2, U> const& t)
+	Transform& operator*=(Transform<2, U> const& t)
 	{
-		auto trans = *this * t.translation;
+		auto tmp = *this * t.translation;
 		rotation *= t.rotation;
-		translation = trans;
+		translation = tmp;
 	}
 };
 
 template <class T>
-Trans<2, T> operator*(Trans<2, T> const& t1, Trans<2, T> const& t2)
+Transform<2, T> operator*(Transform<2, T> const& t1, Transform<2, T> const& t2)
 {
-	Trans<2, T> t = t1;
+	Transform<2, T> t = t1;
 	t *= t2;
 	return t;
 }
 
 template <class T>
-Vec<2, T> operator*(Trans<2, T> const& t, Vec<2, T> const& v)
+Vec<2, T> operator*(Transform<2, T> const& t, Vec<2, T> const& v)
 {
 	return t(v);
 }
 
 template <class T>
-std::ostream& operator<<(std::ostream& out, Trans<2, T> const& t)
+std::ostream& operator<<(std::ostream& out, Transform<2, T> const& t)
 {
 	return out << "Translation: " << t.translation << ", Theta: " << t.theta();
 }
 }  // namespace ufo
 
-#endif  // UFO_MATH_TRANS2_HPP
+#endif  // UFO_MATH_TRANSFORM2_HPP

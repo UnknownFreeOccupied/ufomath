@@ -39,12 +39,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UFO_MATH_TRANS3_HPP
-#define UFO_MATH_TRANS3_HPP
+#ifndef UFO_MATH_TRANSFORM3_HPP
+#define UFO_MATH_TRANSFORM3_HPP
 
 // UFO
-#include <ufo/math/detail/trans.hpp>
-#include <ufo/math/detail/trans_fun.hpp>
+#include <ufo/math/detail/transform.hpp>
+#include <ufo/math/detail/transform_fun.hpp>
 #include <ufo/math/mat3x3.hpp>
 #include <ufo/math/mat4x4.hpp>
 #include <ufo/math/quat.hpp>
@@ -53,7 +53,7 @@
 namespace ufo
 {
 template <class T>
-struct Trans<3, T> {
+struct Transform<3, T> {
 	using value_type = T;
 	using size_type  = std::size_t;
 
@@ -66,46 +66,47 @@ struct Trans<3, T> {
 	|                                                                                     |
 	**************************************************************************************/
 
-	constexpr Trans() noexcept             = default;
-	constexpr Trans(Trans const&) noexcept = default;
+	constexpr Transform() noexcept                 = default;
+	constexpr Transform(Transform const&) noexcept = default;
 
-	constexpr Trans(Mat<3, 3, T> const& rotation, Vec<3, T> const& translation)
+	constexpr Transform(Mat<3, 3, T> const& rotation, Vec<3, T> const& translation)
 	    : rotation(rotation), translation(translation)
 	{
 	}
 
-	constexpr explicit Trans(Mat<3, 3, T> const& rotation) : rotation(rotation) {}
+	constexpr explicit Transform(Mat<3, 3, T> const& rotation) : rotation(rotation) {}
 
 	template <class T1, class T2>
-	constexpr Trans(Mat<3, 3, T1> const& rotation, Vec<3, T2> const& translation)
+	constexpr Transform(Mat<3, 3, T1> const& rotation, Vec<3, T2> const& translation)
 	    : rotation(rotation), translation(translation)
 	{
 	}
 
 	template <class U>
-	constexpr explicit Trans(Mat<3, 3, U> const& rotation) : rotation(rotation)
+	constexpr explicit Transform(Mat<3, 3, U> const& rotation) : rotation(rotation)
 	{
 	}
 
 	template <class T1, class T2>
-	constexpr Trans(Quat<T1> const& rotation, Vec<3, T2> const& translation)
-	    : Trans(Mat<3, 3, T1>(rotation), translation)
+	constexpr Transform(Quat<T1> const& rotation, Vec<3, T2> const& translation)
+	    : Transform(Mat<3, 3, T1>(rotation), translation)
 	{
 	}
 
 	template <class U>
-	constexpr explicit Trans(Quat<U> const& rotation) : Trans(Mat<3, 3, U>(rotation))
+	constexpr explicit Transform(Quat<U> const& rotation)
+	    : Transform(Mat<3, 3, U>(rotation))
 	{
 	}
 
 	template <class U>
-	constexpr explicit Trans(Mat<4, 4, U> const& m)
-	    : Trans(Mat<3, 3, U>(m), Vec<3, U>(m[3]))
+	constexpr explicit Transform(Mat<4, 4, U> const& m)
+	    : Transform(Mat<3, 3, U>(m), Vec<3, U>(m[3]))
 	{
 	}
 
 	template <class U>
-	constexpr explicit Trans(Trans<3, U> const& other) noexcept
+	constexpr explicit Transform(Transform<3, U> const& other) noexcept
 	    : rotation(other.rotation), translation(other.translation)
 	{
 	}
@@ -116,10 +117,10 @@ struct Trans<3, T> {
 	|                                                                                     |
 	**************************************************************************************/
 
-	constexpr Trans& operator=(Trans const&) noexcept = default;
+	constexpr Transform& operator=(Transform const&) noexcept = default;
 
 	template <class U>
-	constexpr Trans& operator=(Trans<3, U> const& rhs) noexcept
+	constexpr Transform& operator=(Transform<3, U> const& rhs) noexcept
 	{
 		rotation    = rhs.rotation;
 		translation = rhs.translation;
@@ -161,7 +162,14 @@ struct Trans<3, T> {
 	template <class U>
 	[[nodiscard]] Vec<3, U> operator()(Vec<3, U> const& v) const
 	{
-		return Mat<4, 4, U>(*this) * Vec<4, U>(v, U(1));
+		// clang-format off
+		return Vec<3, U>(
+				rotation[0][0] * v[0] + rotation[1][0] * v[1] + rotation[2][0] * v[2] + translation[0],
+				rotation[0][1] * v[0] + rotation[1][1] * v[1] + rotation[2][1] * v[2] + translation[1],
+				rotation[0][2] * v[0] + rotation[1][2] * v[1] + rotation[2][2] * v[2] + translation[2]
+			);
+		// clang-format on
+		// return Mat<4, 4, U>(*this) * Vec<4, U>(v, U(1));
 	}
 
 	template <class U>
@@ -171,39 +179,39 @@ struct Trans<3, T> {
 	}
 
 	template <class U>
-	Trans& operator*=(Trans<3, U> const& t)
+	Transform& operator*=(Transform<3, U> const& t)
 	{
-		auto trans = *this * t.translation;
+		auto tmp = *this * t.translation;
 		rotation *= t.rotation;
-		translation = trans;
+		translation = tmp;
 	}
 };
 
 template <class T>
-Trans<3, T> operator*(Trans<3, T> const& t1, Trans<3, T> const& t2)
+Transform<3, T> operator*(Transform<3, T> const& t1, Transform<3, T> const& t2)
 {
-	Trans<3, T> t = t1;
+	Transform<3, T> t = t1;
 	t *= t2;
 	return t;
 }
 
 template <class T>
-Vec<3, T> operator*(Trans<3, T> const& t, Vec<3, T> const& v)
+Vec<3, T> operator*(Transform<3, T> const& t, Vec<3, T> const& v)
 {
 	return t(v);
 }
 
 template <class T>
-Quat<T> operator*(Trans<3, T> const& t, Quat<T> const& q)
+Quat<T> operator*(Transform<3, T> const& t, Quat<T> const& q)
 {
 	return t(q);
 }
 
 template <class T>
-std::ostream& operator<<(std::ostream& out, Trans<3, T> const& t)
+std::ostream& operator<<(std::ostream& out, Transform<3, T> const& t)
 {
 	return out << "Translation: " << t.translation << ", Rotation: " << Quat<T>(t);
 }
 }  // namespace ufo
 
-#endif  // UFO_MATH_TRANS3_HPP
+#endif  // UFO_MATH_TRANSFORM3_HPP
