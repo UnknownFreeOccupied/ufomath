@@ -44,6 +44,7 @@
 
 // UFO
 #include <ufo/math/detail/vec.hpp>
+#include <ufo/math/math.hpp>
 
 // STL
 #include <algorithm>
@@ -209,7 +210,7 @@ template <std::size_t Dim, class T>
 }
 
 template <std::size_t Dim, class T>
-[[nodiscard]] constexpr Vec<Dim, T> max(Vec<Dim, T> v1, Vec<Dim, T> v2)
+[[nodiscard]] constexpr Vec<Dim, T> max(Vec<Dim, T> const& v1, Vec<Dim, T> const& v2)
 {
 	Vec<Dim, T> res;
 	for (std::size_t i{}; Dim > i; ++i) {
@@ -237,7 +238,7 @@ template <std::size_t Dim, class T>
 }
 
 template <std::size_t Dim, class T>
-[[nodiscard]] constexpr std::size_t minIndex(Vec<Dim, T> v)
+[[nodiscard]] constexpr std::size_t minIndex(Vec<Dim, T> const& v)
 {
 	if constexpr (1 == Dim) {
 		return 0;
@@ -277,7 +278,7 @@ template <std::size_t Dim, class T>
 {
 	T sum = v[0];
 	for (std::size_t i{1}; Dim > i; ++i) {
-		sum += std::abs(v[i]);
+		sum += v[i];
 	}
 	return sum;
 }
@@ -483,6 +484,16 @@ template <std::size_t Dim, class T>
 	Vec<Dim, T> res(0);
 	for (std::size_t i{}; Dim > i; ++i) {
 		res[i] = a[i] ? y[i] : x[i];
+	}
+	return res;
+}
+
+template <std::size_t Dim, class T>
+[[nodiscard]] constexpr Vec<Dim, int> sign(Vec<Dim, T> const& x)
+{
+	Vec<Dim, int> res;
+	for (std::size_t i{}; Dim > i; ++i) {
+		res[i] = sign(x[i]);
 	}
 	return res;
 }
