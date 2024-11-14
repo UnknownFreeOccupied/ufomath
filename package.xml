@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>ufomath</name>
+  <version>1.0.0</version>
+  <description>The ufomath package</description>
+
+  <author email="dduberg@kth.se">Daniel Duberg</author>
+  <maintainer email="dduberg@kth.se">Daniel Duberg</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">https://github.com/danielduberg/ufomath</url>
+
+  <buildtool_depend>cmake</buildtool_depend>
+  
+  <export>
+    <build_type>cmake</build_type>
+  </export>
+</package>

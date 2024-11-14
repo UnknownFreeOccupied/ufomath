@@ -1,4 +1,7 @@
 @PACKAGE_INIT@
 
 include("${CMAKE_CURRENT_LIST_DIR}/ufomathTargets.cmake")
+
+add_subdirectory(1stparty)
+
 check_required_components("ufomath")
