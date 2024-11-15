@@ -1,1 +1,1 @@
-include(ufoutility/ufoutility.cmake)
+include(utility/utility.cmake)
