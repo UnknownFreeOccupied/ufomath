@@ -1,0 +1,7 @@
+@PACKAGE_INIT@
+
+# Depends on Utility component
+# FIXME: This is a bit hacky
+include("${CMAKE_CURRENT_LIST_DIR}/Utility-config.cmake")
+
+include("${CMAKE_CURRENT_LIST_DIR}/Math-targets.cmake")
