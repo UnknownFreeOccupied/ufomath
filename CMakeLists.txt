@@ -6,15 +6,6 @@ target_link_libraries(Math
 		UFO::Utility
 )
 
-set_target_properties(Math 
-	PROPERTIES
-		INTERFACE_VERSION ${PROJECT_VERSION}
-		INTERFACE_SOVERSION ${PROJECT_VERSION_MAJOR}
-		INTERFACE_CXX_STANDARD 17
-		INTERFACE_CXX_EXTENSIONS OFF
-		OUTPUT_NAME "UFOMath"
-)
-
 include(GNUInstallDirs)
 
 target_include_directories(Math 
