@@ -1,6 +1,6 @@
-option(UFO_MATH_DOCS     "Generate documentation" OFF)
-option(UFO_MATH_TESTING  "Unit testing"           OFF)
-option(UFO_MATH_COVERAGE "Test Coverage"          OFF)
+option(UFOMATH_BUILD_DOCS     "Generate documentation" OFF)
+option(UFOMATH_BUILD_TESTS    "Unit testing"           OFF)
+option(UFOMATH_BUILD_COVERAGE "Test Coverage"          OFF)
 
 add_library(Math INTERFACE)
 add_library(UFO::Math ALIAS Math)
@@ -18,11 +18,11 @@ target_include_directories(Math
 		$<INSTALL_INTERFACE:include>
 )
 
-if(UFO_TESTING OR UFO_MATH_TESTING)
+if(UFO_BUILD_TESTS OR UFOMATH_BUILD_TESTS)
   add_subdirectory(tests)
 endif()
 
-if(UFO_DOCS OR UFO_MATH_DOCS)
+if(UFO_BUILD_DOCS OR UFOMATH_BUILD_DOCS)
 	add_subdirectory(docs)
 endif()
 

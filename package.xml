@@ -9,7 +9,7 @@
 
   <license>BSD</license>
 
-  <url type="website">https://github.com/danielduberg/ufomath</url>
+  <url type="website">https://github.com/unknownfreeoccupied/ufomath</url>
 
   <buildtool_depend>cmake</buildtool_depend>
   
