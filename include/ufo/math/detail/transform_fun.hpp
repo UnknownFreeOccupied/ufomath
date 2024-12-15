@@ -43,12 +43,13 @@
 #define UFO_MATH_DETAIL_TRANSFORM_FUN_HPP
 
 // UFO
+#include <ufo/execution/execution.hpp>
 #include <ufo/math/detail/transform.hpp>
 #include <ufo/math/mat3x3.hpp>
 #include <ufo/math/mat4x4.hpp>
 #include <ufo/math/vec2.hpp>
 #include <ufo/math/vec3.hpp>
-#include <ufo/utility/execution.hpp>
+#include <ufo/utility/type_traits.hpp>
 
 // STL
 #include <cstddef>
@@ -95,38 +96,45 @@ template <
 RandomIt2 transform(ExecutionPolicy&& policy, Transform<Dim, T> const& t, RandomIt1 first,
                     RandomIt1 last, RandomIt2 d_first)
 {
-	// auto fun = [&t](auto src, auto dst) {
-	// 	*dst                            = *src;
-	// 	Vec v                           = *dst;
-	// 	static_cast<decltype(v)&>(*dst) = t * v;
-	// };
-
 	if constexpr (execution::is_seq_v<ExecutionPolicy>) {
-		// for (; first != last; ++first, ++d_first) {
-		// 	fun(first, d_first);
-		// }
-		// return d_first;
-
-		return std::transform(first, last, d_first, [&t](auto const& x) { return t * x; });
-	} else if constexpr (execution::is_tbb_v<ExecutionPolicy>) {
-		return std::transform(UFO_TBB_PAR first, last, d_first,
+		return std::transform(UFO_PAR_STL_SEQ first, last, d_first,
 		                      [&t](auto const& x) { return t * x; });
-
-		// std::transform(UFO_TBB_PAR first, last, d_first, d_first, [fun](auto in, auto out)
-		// { 	fun(&in, &out); 	return out;
-		// });
-	} else if constexpr (execution::is_omp_v<ExecutionPolicy>) {
+	} else if constexpr (execution::is_unseq_v<ExecutionPolicy>) {
+		return std::transform(UFO_PAR_STL_UNSEQ first, last, d_first,
+		                      [&t](auto const& x) { return t * x; });
+	} else if constexpr (execution::is_par_v<ExecutionPolicy>) {
+		return std::transform(UFO_PAR_STL_PAR first, last, d_first,
+		                      [&t](auto const& x) { return t * x; });
+	} else if constexpr (execution::is_par_unseq_v<ExecutionPolicy>) {
+		return std::transform(UFO_PAR_STL_PAR_UNSEQ first, last, d_first,
+		                      [&t](auto const& x) { return t * x; });
+	}
+#if defined(UFO_PAR_GCD)
+	else if constexpr (execution::is_gcd_v<ExecutionPolicy> ||
+	                   execution::is_gcd_unseq_v<ExecutionPolicy>) {
+		// TODO: Implement
+		static_assert(dependent_false_v<ExecutionPolicy>,
+		              "Not implemented for the execution policy");
+	}
+#endif
+	else if constexpr (execution::is_tbb_v<ExecutionPolicy> ||
+	                   execution::is_tbb_unseq_v<ExecutionPolicy>) {
+		// TODO: Implement
+		static_assert(dependent_false_v<ExecutionPolicy>,
+		              "Not implemented for the execution policy");
+	} else if constexpr (execution::is_omp_v<ExecutionPolicy> ||
+	                     execution::is_omp_unseq_v<ExecutionPolicy>) {
 		std::size_t size = std::distance(first, last);
 
 #pragma omp parallel for
 		for (std::size_t i = 0; i != size; ++i) {
 			d_first[i] = t * first[i];
-			// fun(first + i, d_first + i);
 		}
 
 		return d_first + size;
 	} else {
-		// TODO: Error
+		static_assert(dependent_false_v<ExecutionPolicy>,
+		              "create not implemented for the execution policy");
 	}
 }
 

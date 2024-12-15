@@ -6,7 +6,8 @@ add_library(Math INTERFACE)
 add_library(UFO::Math ALIAS Math)
 
 target_link_libraries(Math 
-	INTERFACE 
+	INTERFACE
+		UFO::Execution
 		UFO::Utility
 )
 
