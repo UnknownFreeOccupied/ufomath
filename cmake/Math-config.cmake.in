@@ -1,7 +1,5 @@
 @PACKAGE_INIT@
 
-# Depends on Execution, Utility component
-# FIXME: This is a bit hacky
 include("${CMAKE_CURRENT_LIST_DIR}/Execution-config.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/Utility-config.cmake")
 
