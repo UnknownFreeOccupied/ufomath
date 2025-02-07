@@ -458,6 +458,17 @@ template <std::size_t Dim, class T>
 	return true;
 }
 
+template <std::size_t Dim, class T>
+[[nodiscard]] constexpr bool isnormal(Vec<Dim, T> const& v)
+{
+	for (std::size_t i{}; Dim > i; ++i) {
+		if (!std::isnormal(v[i])) {
+			return false;
+		}
+	}
+	return true;
+}
+
 template <std::size_t Dim, class T, class F>
 [[nodiscard]] constexpr Vec<Dim, T> lerp(Vec<Dim, T> a, Vec<Dim, T> b, F t)
 {
@@ -494,6 +505,16 @@ template <std::size_t Dim, class T>
 	Vec<Dim, int> res;
 	for (std::size_t i{}; Dim > i; ++i) {
 		res[i] = sign(x[i]);
+	}
+	return res;
+}
+
+template <std::size_t Dim, class T>
+[[nodiscard]] constexpr Vec<Dim, T> ldexp(Vec<Dim, T> const& x, int exp)
+{
+	Vec<Dim, T> res;
+	for (std::size_t i{}; Dim > i; ++i) {
+		res[i] = std::ldexp(x[i], exp);
 	}
 	return res;
 }
