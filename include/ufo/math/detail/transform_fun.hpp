@@ -96,12 +96,12 @@ template <
 RandomIt2 transform(ExecutionPolicy&& policy, Transform<Dim, T> const& t, RandomIt1 first,
                     RandomIt1 last, RandomIt2 d_first)
 {
-	if constexpr (execution::is_stl_v<T>) {
+	if constexpr (execution::is_stl_v<ExecutionPolicy>) {
 		return std::transform(execution::toSTL(policy), first, last, d_first,
 		                      [&t](auto const& x) { return t * x; });
 	}
 #if defined(UFO_PAR_GCD)
-	else if constexpr (execution::is_gcd_v<T>) {
+	else if constexpr (execution::is_gcd_v<ExecutionPolicy>) {
 		std::size_t const size = std::distance(first, last);
 
 		// FIXME: Is this needed?
@@ -115,7 +115,7 @@ RandomIt2 transform(ExecutionPolicy&& policy, Transform<Dim, T> const& t, Random
 	}
 #endif
 #if defined(UFO_PAR_TBB)
-	else if constexpr (execution::is_tbb_v<T>) {
+	else if constexpr (execution::is_tbb_v<ExecutionPolicy>) {
 		std::size_t const size = std::distance(first, last);
 
 		oneapi::tbb::parallel_for(std::size_t(0), size, [&t, first, d_first](std::size_t i) {
@@ -125,7 +125,7 @@ RandomIt2 transform(ExecutionPolicy&& policy, Transform<Dim, T> const& t, Random
 		return d_first + size;
 	}
 #endif
-	else if constexpr (execution::is_omp_v<T>) {
+	else if constexpr (execution::is_omp_v<ExecutionPolicy>) {
 		std::size_t const size = std::distance(first, last);
 
 		auto fun = [t, first](std::size_t i) { return t * first[i]; };
