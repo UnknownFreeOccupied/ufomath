@@ -448,7 +448,18 @@ template <std::size_t Dim>
 }
 
 template <std::size_t Dim, class T>
-[[nodiscard]] constexpr bool isfinite(Vec<Dim, T> v)
+[[nodiscard]] constexpr bool isnan(Vec<Dim, T> const& v)
+{
+	for (std::size_t i{}; Dim > i; ++i) {
+		if (std::isnan(v[i])) {
+			return true;
+		}
+	}
+	return false;
+}
+
+template <std::size_t Dim, class T>
+[[nodiscard]] constexpr bool isfinite(Vec<Dim, T> const& v)
 {
 	for (std::size_t i{}; Dim > i; ++i) {
 		if (!std::isfinite(v[i])) {
