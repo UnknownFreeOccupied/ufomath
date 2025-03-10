@@ -192,6 +192,26 @@ std::ostream& operator<<(std::ostream& out, Transform<2, T> const& t)
 {
 	return out << "Translation: " << t.translation << ", Theta: " << t.theta();
 }
+
+/**************************************************************************************
+|                                                                                     |
+|                                       Compare                                       |
+|                                                                                     |
+**************************************************************************************/
+
+template <class T>
+[[nodiscard]] constexpr bool operator==(Transform<2, T> const& lhs,
+                                        Transform<2, T> const& rhs) noexcept
+{
+	return lhs.rotation == rhs.rotation && lhs.translation == rhs.translation;
+}
+
+template <class T>
+[[nodiscard]] constexpr bool operator!=(Transform<2, T> const& lhs,
+                                        Transform<2, T> const& rhs) noexcept
+{
+	return lhs.rotation != rhs.rotation || lhs.translation != rhs.translation;
+}
 }  // namespace ufo
 
 #endif  // UFO_MATH_TRANSFORM2_HPP

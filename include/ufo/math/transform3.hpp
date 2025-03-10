@@ -212,6 +212,26 @@ std::ostream& operator<<(std::ostream& out, Transform<3, T> const& t)
 {
 	return out << "Translation: " << t.translation << ", Rotation: " << Quat<T>(t);
 }
+
+/**************************************************************************************
+|                                                                                     |
+|                                       Compare                                       |
+|                                                                                     |
+**************************************************************************************/
+
+template <class T>
+[[nodiscard]] constexpr bool operator==(Transform<3, T> const& lhs,
+                                        Transform<3, T> const& rhs) noexcept
+{
+	return lhs.rotation == rhs.rotation && lhs.translation == rhs.translation;
+}
+
+template <class T>
+[[nodiscard]] constexpr bool operator!=(Transform<3, T> const& lhs,
+                                        Transform<3, T> const& rhs) noexcept
+{
+	return lhs.rotation != rhs.rotation || lhs.translation != rhs.translation;
+}
 }  // namespace ufo
 
 #endif  // UFO_MATH_TRANSFORM3_HPP
