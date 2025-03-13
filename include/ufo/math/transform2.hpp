@@ -161,7 +161,7 @@ struct Transform<2, T> {
 	template <class U>
 	[[nodiscard]] Vec<2, U> operator()(Vec<2, U> const& v) const
 	{
-		return Mat<3, 3, U>(*this) * Vec<3, U>(v, U(1));
+		return Vec<2, U>(Mat<3, 3, U>(*this) * Vec<3, U>(v, U(1)));
 	}
 
 	template <class U>
