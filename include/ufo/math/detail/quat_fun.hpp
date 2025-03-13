@@ -311,10 +311,11 @@ template <class T>
 	T const y = T(2) * (q.x * q.y + q.w * q.z);
 	T const x = q.w * q.w + q.x * q.x - q.y * q.y - q.z * q.z;
 
-	if (all(equal(Vec<2, T>(x, y), Vec<2, T>(0), std::numeric_limits<T>::epsilon()))) {
-		// avoid atan2(0,0) - handle singularity - Matiis
-		return T(0);
-	}
+	// TODO: Implement
+	// if (all(equal(Vec<2, T>(x, y), Vec<2, T>(0), std::numeric_limits<T>::epsilon()))) {
+	// 	// avoid atan2(0,0) - handle singularity
+	// 	return T(0);
+	// }
 
 	return T(std::atan2(y, x));
 }
@@ -325,10 +326,11 @@ template <class T>
 	T const y = T(2) * (q.y * q.z + q.w * q.x);
 	T const x = q.w * q.w - q.x * q.x - q.y * q.y + q.z * q.z;
 
-	if (all(equal(Vec<2, T>(x, y), Vec<2, T>(0), std::numeric_limits<T>::epsilon()))) {
-		// avoid atan2(0,0) - handle singularity - Matiis
-		return T(T(2) * std::atan2(q.x, q.w));
-	}
+	// TODO: Implement
+	// if (all(equal(Vec<2, T>(x, y), Vec<2, T>(0), std::numeric_limits<T>::epsilon()))) {
+	// 	// avoid atan2(0,0) - handle singularity
+	// 	return T(T(2) * std::atan2(q.x, q.w));
+	// }
 
 	return T(std::atan2(y, x));
 }
