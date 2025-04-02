@@ -184,6 +184,7 @@ struct Transform<3, T> {
 		auto tmp = *this * t.translation;
 		rotation *= t.rotation;
 		translation = tmp;
+		return *this;
 	}
 };
 
